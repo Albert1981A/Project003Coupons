@@ -1,0 +1,13 @@
+package com.AlbertAbuav.Project003Coupons.beans;
+
+
+public enum Category {
+    FOOD_PRODUCTS,
+    ELECTRICAL_PRODUCTS,
+    HOUSEHOLD_PRODUCTS,
+    GARDEN_PRODUCTS,
+    RESTAURANTS,
+    VACATIONS_ABROAD,
+    VACATIONS_IN_ISRAEL,
+    ENTRANCES_TO_SITES_AND_MUSEUMS
+}
