@@ -1,9 +1,7 @@
 package com.AlbertAbuav.Project003Coupons.controllers;
 
 import com.AlbertAbuav.Project003Coupons.beans.Category;
-import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
-import com.AlbertAbuav.Project003Coupons.beans.Customer;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
 import com.AlbertAbuav.Project003Coupons.exception.SecurityException;
@@ -14,12 +12,12 @@ import com.AlbertAbuav.Project003Coupons.login.ClientType;
 import com.AlbertAbuav.Project003Coupons.login.LoginManager;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.CompanyService;
+import com.AlbertAbuav.Project003Coupons.wrappers.CouponsList;
+import com.AlbertAbuav.Project003Coupons.wrappers.CustomersList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("company-service")  //==>  http://localhost:8080/company-service
@@ -56,36 +54,71 @@ public class CompanyController extends ClientController{
         return new ResponseEntity<>(HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
-    public ResponseEntity<?> updateCoupon(Coupon coupon) throws invalidCompanyException {
-        return null;
+    @PutMapping("coupons") // ==>  http://localhost:8080/company-service/coupons
+    public ResponseEntity<?> updateCoupon(@RequestHeader(value = "Authorization") String token, @RequestBody Coupon coupon) throws invalidCompanyException, SecurityException {
+        if (!tokenManager.isExist(token)) {
+            throw new SecurityException("Token doesn't exist in the system !");
+        }
+        companyService.updateCoupon(coupon);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
     }
 
-    public ResponseEntity<?> deleteCoupon(Coupon coupon) throws invalidCompanyException {
-        return null;
+    @DeleteMapping("coupons/{id}")  // ==>  http://localhost:8080/company-service/coupons/1  (id=1)
+    public ResponseEntity<?> deleteCoupon(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidCompanyException, SecurityException {
+        if (!tokenManager.isExist(token)) {
+            throw new SecurityException("Token doesn't exist in the system !");
+        }
+        Coupon couponToDelete = companyService.getSingleCoupon(id);
+        companyService.deleteCoupon(couponToDelete);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
     }
 
-    public List<Coupon> getAllCompanyCoupons() {
-        return null;
+    @GetMapping("coupons")  //==>  http://localhost:8080/company-service/coupons
+    public ResponseEntity<?> getAllCompanyCoupons(@RequestHeader(value = "Authorization") String token) throws SecurityException {
+        if (!tokenManager.isExist(token)) {
+            throw new SecurityException("Token doesn't exist in the system !");
+        }
+        return new ResponseEntity<>(new CouponsList(companyService.getAllCompanyCoupons()), HttpStatus.OK); //==> Return body + 200
     }
 
-    public List<Coupon> getAllCompanyCouponsOfSpecificCategory(Category category) throws invalidCompanyException {
-        return null;
+    @GetMapping("coupons/by-category")  //==>  http://localhost:8080/company-service/coupons/by-category
+    public ResponseEntity<?> getAllCompanyCouponsOfSpecificCategory(@RequestHeader(value = "Authorization") String token, @RequestParam("category") Category category) throws invalidCompanyException, SecurityException {
+        if (!tokenManager.isExist(token)) {
+            throw new SecurityException("Token doesn't exist in the system !");
+        }
+        return new ResponseEntity<>(new CouponsList(companyService.getAllCompanyCouponsOfSpecificCategory(category)), HttpStatus.OK); //==> Return body + 200
     }
 
-    public List<Coupon> getAllCompanyCouponsUpToMaxPrice(double maxPrice) throws invalidCompanyException {
-        return null;
+    @GetMapping("coupons/max-price")  //==>  http://localhost:8080/company-service/coupons/max-price
+    public ResponseEntity<?> getAllCompanyCouponsUpToMaxPrice(@RequestHeader(value = "Authorization") String token, @RequestParam double maxPrice) throws invalidCompanyException, SecurityException {
+        if (!tokenManager.isExist(token)) {
+            throw new SecurityException("Token doesn't exist in the system !");
+        }
+        return new ResponseEntity<>(new CouponsList(companyService.getAllCompanyCouponsUpToMaxPrice(maxPrice)), HttpStatus.OK); //==> Return body + 200
     }
 
-    public Company getTheLoggedCompanyDetails() {
-        return null;
+    @GetMapping("company-details")  //==>  http://localhost:8080/company-service/company-details
+    public ResponseEntity<?> getTheLoggedCompanyDetails(@RequestHeader(value = "Authorization") String token) throws SecurityException {
+        if (!tokenManager.isExist(token)) {
+            throw new SecurityException("Token doesn't exist in the system !");
+        }
+        return new ResponseEntity<>(companyService.getTheLoggedCompanyDetails(), HttpStatus.OK); //==> Return body + 200
     }
 
-    public Coupon getSingleCoupon(int id) throws invalidCompanyException {
-        return null;
+    @GetMapping("coupons/{id}")  //==>  http://localhost:8080/company-service/coupons/1  (id=1)
+    public ResponseEntity<?> getSingleCoupon(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidCompanyException, SecurityException {
+        if (!tokenManager.isExist(token)) {
+            throw new SecurityException("Token doesn't exist in the system !");
+        }
+        return new ResponseEntity<>(companyService.getSingleCoupon(id), HttpStatus.OK); //==> Return body + 200
     }
 
-    public List<Customer> getAllCompanyCustomersOfASingleCouponByCouponId(int couponID) throws invalidCompanyException {
-        return null;
+    @GetMapping("company-customers-by-coupon-id/{id}")  //==>  http://localhost:8080/company-service/company-customers-by-coupon-id/1 (id=1)
+    public ResponseEntity<?> getAllCompanyCustomersOfASingleCouponByCouponId(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidCompanyException, SecurityException {
+        if (!tokenManager.isExist(token)) {
+            throw new SecurityException("Token doesn't exist in the system !");
+        }
+        return new ResponseEntity<>(new CustomersList(companyService.getAllCompanyCustomersOfASingleCouponByCouponId(id)), HttpStatus.OK); //==> Return body + 200
     }
 
 }

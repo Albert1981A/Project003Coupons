@@ -23,8 +23,9 @@ public class Customer {
     private String lastName;
     private String email;
     private String password;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Singular
+    @ToString.Exclude
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Coupon> coupons = new ArrayList<>();
 
     @Override

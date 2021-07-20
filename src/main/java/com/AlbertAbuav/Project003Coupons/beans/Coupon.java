@@ -14,9 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Coupon {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -30,7 +29,8 @@ public class Coupon {
     private int amount;
     private double price;
     private String image;
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "coupons")
+    @ToString.Exclude
+    @ManyToMany(cascade = CascadeType.PERSIST, mappedBy = "coupons")
     @Singular  // ==> Works with Builder and initializes the list and let us insert a single book each time
     private List<Customer> customers = new ArrayList<>();
 

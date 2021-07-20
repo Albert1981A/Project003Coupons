@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 @Order(6)
 public class SchedulingDailyTask implements CommandLineRunner {

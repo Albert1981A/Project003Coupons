@@ -19,8 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("admin-service")  //==>  http://localhost:8080/admin-service
 @RequiredArgsConstructor
@@ -80,7 +78,7 @@ public class AdminController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CompaniesList(adminService.getAllCompanies()), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(adminService.getAllCompanies(), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("companies/{id}")  // ==>  http://localhost:8080/admin-service/companies/1  (id=1)
@@ -124,7 +122,7 @@ public class AdminController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CustomersList(adminService.getAllCustomers()), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(adminService.getAllCustomers(), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("customers/{id}")  // ==>  http://localhost:8080/admin-service/customers/1  (id=1)

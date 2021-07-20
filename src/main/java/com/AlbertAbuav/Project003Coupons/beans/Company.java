@@ -3,6 +3,7 @@ package com.AlbertAbuav.Project003Coupons.beans;
 import com.AlbertAbuav.Project003Coupons.utils.PrintUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Company {
     private String name;
     private String email;
     private String password;
+    @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Singular
     private List<Coupon> coupons = new ArrayList<>();
