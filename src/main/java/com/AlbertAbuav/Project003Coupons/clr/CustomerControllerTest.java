@@ -15,6 +15,8 @@ import com.AlbertAbuav.Project003Coupons.utils.TestUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -28,9 +30,11 @@ public class CustomerControllerTest implements CommandLineRunner {
 
     private final ChartUtils chartUtils;
     private final static String B_URL = "http://localhost:8080/customer-service";
+    private static String loggedToken;
+    private static HttpHeaders httpHeaders = new HttpHeaders();
+    private static HttpEntity<String> entity;
 
     private final RestTemplate restTemplate;
-    private final CustomerService customerService;
     private final AdminService adminService;
 
     @Override
@@ -45,7 +49,10 @@ public class CustomerControllerTest implements CommandLineRunner {
         ResponseEntity<String> loggedCustomer = restTemplate.postForEntity(B_URL + "/login", loginDetails, String.class);
         System.out.println("The status code response is: " + loggedCustomer.getStatusCodeValue());
         System.out.println("This is the Token given to the company: \n" + loggedCustomer.getBody());
-        System.out.println();
+
+        loggedToken = loggedCustomer.getBody();
+        httpHeaders.add("Authorization", loggedToken);
+        entity = new HttpEntity<>("parameters", httpHeaders);
 
         TestUtils.testCustomerInfo("Add Coupon");
 

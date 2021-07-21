@@ -1,7 +1,9 @@
 package com.AlbertAbuav.Project003Coupons.beans;
 
 import com.AlbertAbuav.Project003Coupons.utils.DateUtils;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,8 +16,12 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@EqualsAndHashCode(of = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@Id")
+//@JsonIdentityInfo(property = "id", generator = ObjectIdGenerators.PropertyGenerator.class)
 public class Coupon {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -30,7 +36,7 @@ public class Coupon {
     private double price;
     private String image;
     @ToString.Exclude
-    @ManyToMany(cascade = CascadeType.PERSIST, mappedBy = "coupons")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "coupons")
     @Singular  // ==> Works with Builder and initializes the list and let us insert a single book each time
     private List<Customer> customers = new ArrayList<>();
 

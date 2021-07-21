@@ -10,10 +10,11 @@ import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
 import com.AlbertAbuav.Project003Coupons.exception.invalidCustomerException;
 import com.AlbertAbuav.Project003Coupons.login.ClientType;
 import com.AlbertAbuav.Project003Coupons.login.LoginManager;
+import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.AdminService;
-import com.AlbertAbuav.Project003Coupons.wrappers.CompaniesList;
-import com.AlbertAbuav.Project003Coupons.wrappers.CustomersList;
+import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCompanies;
+import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCustomers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminController extends ClientController{
 
-    private final AdminService adminService;
+    private AdminService adminService;
     private final LoginManager loginManager;
     private final TokenManager tokenManager;
 
@@ -32,6 +33,8 @@ public class AdminController extends ClientController{
     @Override
     public ResponseEntity<?> login(@RequestBody LoginDetails loginDetails) throws invalidCompanyException, invalidAdminException, invalidCustomerException {
         String token = loginManager.login(loginDetails.getEmail(), loginDetails.getPassword(), ClientType.ADMINISTRATOR);
+        Information information = tokenManager.getMap().get(token);
+        adminService = (AdminService) information.getClientFacade();
         return new ResponseEntity<>(token, HttpStatus.CREATED);  //==> return String token + 201
     }
 
@@ -78,7 +81,7 @@ public class AdminController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(adminService.getAllCompanies(), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(new ListOfCompanies(adminService.getAllCompanies()), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("companies/{id}")  // ==>  http://localhost:8080/admin-service/companies/1  (id=1)
@@ -122,7 +125,7 @@ public class AdminController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(adminService.getAllCustomers(), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(new ListOfCustomers(adminService.getAllCustomers()), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("customers/{id}")  // ==>  http://localhost:8080/admin-service/customers/1  (id=1)

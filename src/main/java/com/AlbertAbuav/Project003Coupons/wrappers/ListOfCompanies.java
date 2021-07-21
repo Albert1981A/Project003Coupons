@@ -11,6 +11,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompaniesList {
+public class ListOfCompanies {
     private List<Company> companies = new ArrayList<>();
 }

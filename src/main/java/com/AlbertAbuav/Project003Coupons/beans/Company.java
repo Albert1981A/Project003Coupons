@@ -1,7 +1,9 @@
 package com.AlbertAbuav.Project003Coupons.beans;
 
 import com.AlbertAbuav.Project003Coupons.utils.PrintUtils;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 
@@ -15,6 +17,8 @@ import java.util.List;
 @Data
 @Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@EqualsAndHashCode(of = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@Id")
 public class Company {
 
     @Id

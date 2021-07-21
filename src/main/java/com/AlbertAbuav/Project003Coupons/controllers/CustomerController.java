@@ -10,10 +10,10 @@ import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
 import com.AlbertAbuav.Project003Coupons.exception.invalidCustomerException;
 import com.AlbertAbuav.Project003Coupons.login.ClientType;
 import com.AlbertAbuav.Project003Coupons.login.LoginManager;
+import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
+import com.AlbertAbuav.Project003Coupons.service.CompanyService;
 import com.AlbertAbuav.Project003Coupons.service.CustomerService;
-import com.AlbertAbuav.Project003Coupons.wrappers.CouponsList;
-import com.AlbertAbuav.Project003Coupons.wrappers.CustomersList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CustomerController extends ClientController{
 
-    private final CustomerService customerService;
+    private CustomerService customerService;
     private final LoginManager loginManager;
     private final TokenManager tokenManager;
 
@@ -32,6 +32,8 @@ public class CustomerController extends ClientController{
     @Override
     public ResponseEntity<?> login(@RequestBody LoginDetails loginDetails) throws invalidCompanyException, invalidAdminException, invalidCustomerException {
         String token = loginManager.login(loginDetails.getEmail(), loginDetails.getPassword(), ClientType.CUSTOMER);
+        Information information = tokenManager.getMap().get(token);
+        customerService = (CustomerService) information.getClientFacade();
         return new ResponseEntity<>(token, HttpStatus.CREATED);  //==> return String token + 201
     }
 
@@ -59,7 +61,7 @@ public class CustomerController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CouponsList(customerService.getAllCustomerCoupons()), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(customerService.getAllCustomerCoupons(), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("coupons/by-category")  //==>  http://localhost:8080/customer-service/coupons/by-category
@@ -67,7 +69,7 @@ public class CustomerController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CouponsList(customerService.getAllCustomerCouponsOfSpecificCategory(category)), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(customerService.getAllCustomerCouponsOfSpecificCategory(category), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("coupons/max-price")  //==>  http://localhost:8080/customer-service/coupons/max-price
@@ -75,7 +77,7 @@ public class CustomerController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CouponsList(customerService.getAllCustomerCouponsUpToMaxPrice(maxPrice)), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(customerService.getAllCustomerCouponsUpToMaxPrice(maxPrice), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("customer-details")  //==>  http://localhost:8080/customer-service/customer-details
@@ -91,6 +93,6 @@ public class CustomerController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CustomersList(customerService.findAllCustomersByCouponId(id)), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(customerService.findAllCustomersByCouponId(id), HttpStatus.OK); //==> Return body + 200
     }
 }

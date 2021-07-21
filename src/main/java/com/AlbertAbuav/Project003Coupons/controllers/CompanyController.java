@@ -1,6 +1,7 @@
 package com.AlbertAbuav.Project003Coupons.controllers;
 
 import com.AlbertAbuav.Project003Coupons.beans.Category;
+import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
@@ -10,21 +11,24 @@ import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
 import com.AlbertAbuav.Project003Coupons.exception.invalidCustomerException;
 import com.AlbertAbuav.Project003Coupons.login.ClientType;
 import com.AlbertAbuav.Project003Coupons.login.LoginManager;
+import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.CompanyService;
-import com.AlbertAbuav.Project003Coupons.wrappers.CouponsList;
-import com.AlbertAbuav.Project003Coupons.wrappers.CustomersList;
+import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCompanies;
+import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCoupons;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("company-service")  //==>  http://localhost:8080/company-service
 @RequiredArgsConstructor
 public class CompanyController extends ClientController{
 
-    private final CompanyService companyService;
+    private CompanyService companyService;
     private final LoginManager loginManager;
     private final TokenManager tokenManager;
 
@@ -32,6 +36,8 @@ public class CompanyController extends ClientController{
     @Override
     public ResponseEntity<?> login(@RequestBody LoginDetails loginDetails) throws invalidCompanyException, invalidAdminException, invalidCustomerException {
         String token = loginManager.login(loginDetails.getEmail(), loginDetails.getPassword(), ClientType.COMPANY);
+        Information information = tokenManager.getMap().get(token);
+        companyService = (CompanyService) information.getClientFacade();
         return new ResponseEntity<>(token, HttpStatus.CREATED);  //==> return String token + 201
     }
 
@@ -78,7 +84,7 @@ public class CompanyController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CouponsList(companyService.getAllCompanyCoupons()), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(new ListOfCoupons(companyService.getAllCompanyCoupons()), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("coupons/by-category")  //==>  http://localhost:8080/company-service/coupons/by-category
@@ -86,7 +92,7 @@ public class CompanyController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CouponsList(companyService.getAllCompanyCouponsOfSpecificCategory(category)), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(new ListOfCoupons(companyService.getAllCompanyCouponsOfSpecificCategory(category)), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("coupons/max-price")  //==>  http://localhost:8080/company-service/coupons/max-price
@@ -94,7 +100,7 @@ public class CompanyController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CouponsList(companyService.getAllCompanyCouponsUpToMaxPrice(maxPrice)), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(new ListOfCoupons(companyService.getAllCompanyCouponsUpToMaxPrice(maxPrice)), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("company-details")  //==>  http://localhost:8080/company-service/company-details
@@ -118,7 +124,7 @@ public class CompanyController extends ClientController{
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }
-        return new ResponseEntity<>(new CustomersList(companyService.getAllCompanyCustomersOfASingleCouponByCouponId(id)), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(companyService.getAllCompanyCustomersOfASingleCouponByCouponId(id), HttpStatus.OK); //==> Return body + 200
     }
 
 }

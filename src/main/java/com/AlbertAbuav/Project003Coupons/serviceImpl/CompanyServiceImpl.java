@@ -205,6 +205,7 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
      * @return Company
      */
     public Company getTheLoggedCompanyDetails() {
+        System.out.println(companyID);
         return companyRepository.getOne(companyID);
     }
 
