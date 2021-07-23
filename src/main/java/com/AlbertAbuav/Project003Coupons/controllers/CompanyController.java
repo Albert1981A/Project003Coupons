@@ -87,8 +87,8 @@ public class CompanyController extends ClientController{
         return new ResponseEntity<>(new ListOfCoupons(companyService.getAllCompanyCoupons()), HttpStatus.OK); //==> Return body + 200
     }
 
-    @GetMapping("coupons/by-category")  //==>  http://localhost:8080/company-service/coupons/by-category
-    public ResponseEntity<?> getAllCompanyCouponsOfSpecificCategory(@RequestHeader(value = "Authorization") String token, @RequestParam("category") Category category) throws invalidCompanyException, SecurityException {
+    @GetMapping("coupons/category")  //==>  http://localhost:8080/company-service/coupons/by-category/1  (category=1)
+    public ResponseEntity<?> getAllCompanyCouponsOfSpecificCategory(@RequestHeader(value = "Authorization") String token, @RequestParam(value = "category") Category category) throws invalidCompanyException, SecurityException {
         if (!tokenManager.isExist(token)) {
             throw new SecurityException("Token doesn't exist in the system !");
         }

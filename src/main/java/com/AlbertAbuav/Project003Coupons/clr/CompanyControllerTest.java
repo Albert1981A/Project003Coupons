@@ -1,19 +1,14 @@
 package com.AlbertAbuav.Project003Coupons.clr;
 
-import com.AlbertAbuav.Project003Coupons.beans.Category;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
-import com.AlbertAbuav.Project003Coupons.beans.Customer;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
-import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
+import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
 import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.AdminService;
 import com.AlbertAbuav.Project003Coupons.service.CompanyService;
-import com.AlbertAbuav.Project003Coupons.utils.ArtUtils;
-import com.AlbertAbuav.Project003Coupons.utils.ChartUtils;
-import com.AlbertAbuav.Project003Coupons.utils.Colors;
-import com.AlbertAbuav.Project003Coupons.utils.TestUtils;
+import com.AlbertAbuav.Project003Coupons.utils.*;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCoupons;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -21,8 +16,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -36,7 +29,10 @@ public class CompanyControllerTest implements CommandLineRunner {
     private static HttpEntity<String> entity;
 
     private final RestTemplate restTemplate;
+    private final FactoryUtils factoryUtils;
     private final AdminService adminService;
+    private final TokenManager tokenManager;
+    private CompanyService companyService;
 
 
     @Override
@@ -52,11 +48,25 @@ public class CompanyControllerTest implements CommandLineRunner {
         System.out.println("The status code response is: " + loggedCompany.getStatusCodeValue());
         System.out.println("This is the Token given to the company: \n" + loggedCompany.getBody());
 
+        Information information = tokenManager.getMap().get(loggedCompany.getBody());
+        companyService = (CompanyService) information.getClientFacade();
+
         loggedToken = loggedCompany.getBody();
         httpHeaders.add("Authorization", loggedToken);
         entity = new HttpEntity<>("parameters", httpHeaders);
 
         TestUtils.testCompanyInfo("Add Coupon");
+
+        Coupon coupon1 = factoryUtils.createCouponOfACompany(2);
+        System.out.println("this is the coupon to add:");
+        chartUtils.printCoupon(coupon1);
+
+        HttpEntity<Coupon> entity1 = new HttpEntity<>(coupon1, httpHeaders);
+        ResponseEntity<String> addCoupon = restTemplate.exchange(B_URL + "/coupons", HttpMethod.POST, entity1, String.class);
+        System.out.println("The status code response is: " + addCoupon.getStatusCodeValue());
+
+        System.out.println("This is the company details after adding the coupon:");
+        chartUtils.printCompany(companyService.getTheLoggedCompanyDetails());
 
         TestUtils.testCompanyInfo("Update Coupon");
 
@@ -69,6 +79,11 @@ public class CompanyControllerTest implements CommandLineRunner {
         chartUtils.printCoupons(companyCoupons.getBody().getCoupons());
 
         TestUtils.testCompanyInfo("Get all Company Coupons of a specific Category");
+
+        System.out.println("The Category to search is: " + coupon1.getCategory());
+        ResponseEntity<ListOfCoupons> categoryCoupons = restTemplate.exchange(B_URL + "/coupons/category/?category=" + coupon1.getCategory(), HttpMethod.GET, entity, ListOfCoupons.class);
+        System.out.println("The status code response is: " + categoryCoupons.getStatusCodeValue());
+        chartUtils.printCoupons(categoryCoupons.getBody().getCoupons());
 
         TestUtils.testCompanyInfo("Get all Company Coupons up to a max price");
 
@@ -87,6 +102,14 @@ public class CompanyControllerTest implements CommandLineRunner {
         TestUtils.testCompanyInfo("Get all Company Customers of a single Coupon by the Coupon id");
 
         TestUtils.testCompanyInfo("Logout the company");
+
+        LogoutDetails logoutDetails = new LogoutDetails(loggedToken);
+        HttpEntity<LogoutDetails> logoutEntity = new HttpEntity<>(logoutDetails);
+        ResponseEntity<String> logoutCompany = restTemplate.exchange(B_URL + "/logout", HttpMethod.DELETE, logoutEntity , String.class);
+        System.out.println("The status code response is: " + logoutCompany.getStatusCodeValue());
+
+        System.out.println();
+        System.out.println();
 
     }
 }

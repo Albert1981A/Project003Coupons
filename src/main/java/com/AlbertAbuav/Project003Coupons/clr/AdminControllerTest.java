@@ -4,14 +4,13 @@ import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
+import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
 import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
-import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
+import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.AdminService;
-import com.AlbertAbuav.Project003Coupons.service.CompanyService;
 import com.AlbertAbuav.Project003Coupons.utils.*;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCompanies;
-import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCoupons;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCustomers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -34,13 +33,15 @@ public class AdminControllerTest implements CommandLineRunner {
 
     private final ChartUtils chartUtils;
     private final static String B_URL = "http://localhost:8080/admin-service";
+    private static LoginDetails loginDetails;
     private static String loggedToken;
     private static HttpHeaders httpHeaders = new HttpHeaders();
     private static HttpEntity<String> entity;
 
     private final RestTemplate restTemplate;
     private final FactoryUtils factoryUtils;
-    private final AdminService adminService;
+    private final TokenManager tokenManager;
+    private AdminService adminService;
 
     @Override
     public void run(String... args) {
@@ -49,15 +50,17 @@ public class AdminControllerTest implements CommandLineRunner {
 
         TestUtils.testAdminInfo("Login to Admin and receive a token");
 
-        LoginDetails loginDetails = new LoginDetails("admin@admin.com", "admin");
+        loginDetails = new LoginDetails("admin@admin.com", "admin");
         ResponseEntity<String> loggedAdmin = restTemplate.postForEntity(B_URL + "/login", loginDetails, String.class);
         System.out.println("The status code response is: " + loggedAdmin.getStatusCodeValue());
         System.out.println("This is the Token given to the admin: \n" + loggedAdmin.getBody());
 
+        Information information = tokenManager.getMap().get(loggedAdmin.getBody());
+        adminService = (AdminService) information.getClientFacade();
+
         loggedToken = loggedAdmin.getBody();
         httpHeaders.add("Authorization", loggedToken);
         entity = new HttpEntity<>("parameters", httpHeaders);
-
 
         TestUtils.testAdminInfo("Add Company");
 
@@ -204,5 +207,12 @@ public class AdminControllerTest implements CommandLineRunner {
 
         TestUtils.testAdminInfo("Logout the Admin");
 
+        LogoutDetails logoutDetails = new LogoutDetails(loggedToken);
+        HttpEntity<LogoutDetails> logoutEntity = new HttpEntity<>(logoutDetails);
+        ResponseEntity<String> logoutAdmin = restTemplate.exchange(B_URL + "/logout", HttpMethod.DELETE, logoutEntity , String.class);
+        System.out.println("The status code response is: " + logoutAdmin.getStatusCodeValue());
+
+        System.out.println();
+        System.out.println();
     }
 }
