@@ -1,5 +1,6 @@
 package com.AlbertAbuav.Project003Coupons.security;
 
+import com.AlbertAbuav.Project003Coupons.exception.SecurityException;
 import com.AlbertAbuav.Project003Coupons.serviceImpl.ClientFacade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,8 +43,11 @@ public class TokenManager {
 //        return false;
 //    }
 
-    public boolean isExist(String token) {
-        return map.get(token) != null;
+    public boolean isExist(String token) throws SecurityException {
+        if (map.get(token) == null){
+            throw new SecurityException("Unauthorized entry");
+        }
+        return true;
     }
 
 //    public void removeExpiredToken(int minutes) {

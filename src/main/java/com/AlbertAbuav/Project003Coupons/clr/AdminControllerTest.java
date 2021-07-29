@@ -208,7 +208,7 @@ public class AdminControllerTest implements CommandLineRunner {
         TestUtils.testAdminInfo("Logout the Admin");
 
         LogoutDetails logoutDetails = new LogoutDetails(loggedToken);
-        HttpEntity<LogoutDetails> logoutEntity = new HttpEntity<>(logoutDetails);
+        HttpEntity<LogoutDetails> logoutEntity = new HttpEntity<>(logoutDetails, httpHeaders);
         ResponseEntity<String> logoutAdmin = restTemplate.exchange(B_URL + "/logout", HttpMethod.DELETE, logoutEntity , String.class);
         System.out.println("The status code response is: " + logoutAdmin.getStatusCodeValue());
 

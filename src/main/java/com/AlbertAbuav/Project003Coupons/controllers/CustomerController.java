@@ -39,60 +39,39 @@ public class CustomerController extends ClientController{
 
     @DeleteMapping("logout") // ==>  http://localhost:8080/customer-service/logout
     @Override
-    public ResponseEntity<?> logOut(@RequestBody LogoutDetails logoutDetails) throws SecurityException {
-        if (!tokenManager.isExist(logoutDetails.getToken())) {
-            throw new SecurityException("Token doesn't exist in the system !");
-        }
+    public ResponseEntity<?> logOut(@RequestHeader(value = "Authorization") String token, @RequestBody LogoutDetails logoutDetails) {
         tokenManager.deleteToken(logoutDetails.getToken());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);  //==> Return 204 (ok and no content)
     }
 
     @PostMapping("coupons") // ==>  http://localhost:8080/customer-service/coupons
-    public ResponseEntity<?> addCoupon(@RequestHeader(value = "Authorization") String token, @RequestBody Coupon coupon) throws invalidCustomerException, SecurityException {
-        if (!tokenManager.isExist(token)) {
-            throw new SecurityException("Token doesn't exist in the system !");
-        }
+    public ResponseEntity<?> addCoupon(@RequestHeader(value = "Authorization") String token, @RequestBody Coupon coupon) throws invalidCustomerException {
         customerService.addCoupon(coupon);
         return new ResponseEntity<>(HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
     @GetMapping("coupons")  //==>  http://localhost:8080/customer-service/coupons
-    public ResponseEntity<?> getAllCustomerCoupons(@RequestHeader(value = "Authorization") String token) throws invalidCustomerException, SecurityException {
-        if (!tokenManager.isExist(token)) {
-            throw new SecurityException("Token doesn't exist in the system !");
-        }
+    public ResponseEntity<?> getAllCustomerCoupons(@RequestHeader(value = "Authorization") String token) throws invalidCustomerException {
         return new ResponseEntity<>(customerService.getAllCustomerCoupons(), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("coupons/by-category")  //==>  http://localhost:8080/customer-service/coupons/by-category
-    public ResponseEntity<?> getAllCustomerCouponsOfSpecificCategory(@RequestHeader(value = "Authorization") String token, @RequestParam("category") Category category) throws invalidCustomerException, SecurityException {
-        if (!tokenManager.isExist(token)) {
-            throw new SecurityException("Token doesn't exist in the system !");
-        }
+    public ResponseEntity<?> getAllCustomerCouponsOfSpecificCategory(@RequestHeader(value = "Authorization") String token, @RequestParam("category") Category category) throws invalidCustomerException {
         return new ResponseEntity<>(customerService.getAllCustomerCouponsOfSpecificCategory(category), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("coupons/max-price")  //==>  http://localhost:8080/customer-service/coupons/max-price
-    public ResponseEntity<?> getAllCustomerCouponsUpToMaxPrice(@RequestHeader(value = "Authorization") String token, @RequestParam double maxPrice) throws invalidCustomerException, SecurityException {
-        if (!tokenManager.isExist(token)) {
-            throw new SecurityException("Token doesn't exist in the system !");
-        }
+    public ResponseEntity<?> getAllCustomerCouponsUpToMaxPrice(@RequestHeader(value = "Authorization") String token, @RequestParam double maxPrice) throws invalidCustomerException {
         return new ResponseEntity<>(customerService.getAllCustomerCouponsUpToMaxPrice(maxPrice), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("customer-details")  //==>  http://localhost:8080/customer-service/customer-details
-    public ResponseEntity<?>  getTheLoggedCustomerDetails(@RequestHeader(value = "Authorization") String token) throws SecurityException {
-        if (!tokenManager.isExist(token)) {
-            throw new SecurityException("Token doesn't exist in the system !");
-        }
+    public ResponseEntity<?>  getTheLoggedCustomerDetails(@RequestHeader(value = "Authorization") String token) {
         return new ResponseEntity<>(customerService.getTheLoggedCustomerDetails(), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("customers-by-coupon-id/{id}")  //==>  http://localhost:8080/customer-service/customers-by-coupon-id/1 (id=1)
-    public ResponseEntity<?>  findAllCustomersByCouponId(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws SecurityException {
-        if (!tokenManager.isExist(token)) {
-            throw new SecurityException("Token doesn't exist in the system !");
-        }
+    public ResponseEntity<?>  findAllCustomersByCouponId(@RequestHeader(value = "Authorization") String token, @PathVariable int id) {
         return new ResponseEntity<>(customerService.findAllCustomersByCouponId(id), HttpStatus.OK); //==> Return body + 200
     }
 }

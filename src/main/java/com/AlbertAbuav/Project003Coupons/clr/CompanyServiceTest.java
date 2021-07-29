@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.List;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 @Order(3)
 public class CompanyServiceTest implements CommandLineRunner {

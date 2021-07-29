@@ -2,6 +2,7 @@ package com.AlbertAbuav.Project003Coupons.beans;
 
 import com.AlbertAbuav.Project003Coupons.utils.PrintUtils;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
@@ -27,9 +28,11 @@ public class Company {
     private String name;
     private String email;
     private String password;
-    @ToString.Exclude
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Singular
+    @ToString.Exclude
+    @JsonIgnore
     private List<Coupon> coupons = new ArrayList<>();
 
     @Override

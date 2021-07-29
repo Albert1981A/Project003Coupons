@@ -1,5 +1,6 @@
 package com.AlbertAbuav.Project003Coupons.clr;
 
+import com.AlbertAbuav.Project003Coupons.beans.Category;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
@@ -10,6 +11,7 @@ import com.AlbertAbuav.Project003Coupons.service.AdminService;
 import com.AlbertAbuav.Project003Coupons.service.CompanyService;
 import com.AlbertAbuav.Project003Coupons.utils.*;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCoupons;
+import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCustomers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -70,7 +72,32 @@ public class CompanyControllerTest implements CommandLineRunner {
 
         TestUtils.testCompanyInfo("Update Coupon");
 
+        Coupon couponToUpdate = companyService.getSingleCoupon(5);
+        System.out.println("This is the Coupon to update: ");
+        chartUtils.printCoupon(couponToUpdate);
+
+        couponToUpdate.setAmount(3);
+        couponToUpdate.setDescription("New-Description");
+
+        HttpEntity<Coupon> entityU = new HttpEntity<>(couponToUpdate, httpHeaders);
+
+        ResponseEntity<String> updateCoupon = restTemplate.exchange(B_URL + "/coupons", HttpMethod.PUT, entityU, String.class);
+        System.out.println("The status code response is: " + updateCoupon.getStatusCodeValue());
+
+        System.out.println("This is the company details after updating the coupon:");
+        chartUtils.printCompany(companyService.getTheLoggedCompanyDetails());
+
         TestUtils.testCompanyInfo("Delete Coupon");
+
+        Coupon couponToDelete = companyService.getSingleCoupon(5);
+        System.out.println("This is the coupon to delete:");
+        chartUtils.printCoupon(couponToDelete);
+
+        ResponseEntity<String> deleteCoupon = restTemplate.exchange(B_URL + "/coupons/" + couponToDelete.getId(), HttpMethod.DELETE, entity, String.class);
+        System.out.println(deleteCoupon.getStatusCodeValue());
+
+        System.out.println("This is the company details after deleting the coupon:");
+        chartUtils.printCompany(companyService.getTheLoggedCompanyDetails());
 
         TestUtils.testCompanyInfo("Get all Company Coupons");
 
@@ -87,6 +114,12 @@ public class CompanyControllerTest implements CommandLineRunner {
 
         TestUtils.testCompanyInfo("Get all Company Coupons up to a max price");
 
+        double max = 78.2;
+        System.out.println("The max price to search is: " + max);
+        ResponseEntity<ListOfCoupons> maxPriceCoupons = restTemplate.exchange(B_URL + "/coupons/max-price/?max-price=" + max, HttpMethod.GET, entity, ListOfCoupons.class);
+        System.out.println("The status code response is: " + maxPriceCoupons.getStatusCodeValue());
+        chartUtils.printCoupons(maxPriceCoupons.getBody().getCoupons());
+
         TestUtils.testCompanyInfo("Get the logged Company details");
 
         ResponseEntity<Company> loggedCompanyDetails = restTemplate.exchange(B_URL + "/company-details", HttpMethod.GET, entity, Company.class);
@@ -101,10 +134,15 @@ public class CompanyControllerTest implements CommandLineRunner {
 
         TestUtils.testCompanyInfo("Get all Company Customers of a single Coupon by the Coupon id");
 
+        System.out.println("The coupon id is: 4\nThe logged company id is: 2");
+        ResponseEntity<ListOfCustomers> companyCustomers = restTemplate.exchange(B_URL + "/company-customers-by-coupon-id/4", HttpMethod.GET, entity, ListOfCustomers.class);
+        System.out.println("The status code response is: " + companyCustomers.getStatusCodeValue());
+        chartUtils.printCustomers(companyCustomers.getBody().getCustomers());
+
         TestUtils.testCompanyInfo("Logout the company");
 
         LogoutDetails logoutDetails = new LogoutDetails(loggedToken);
-        HttpEntity<LogoutDetails> logoutEntity = new HttpEntity<>(logoutDetails);
+        HttpEntity<LogoutDetails> logoutEntity = new HttpEntity<>(logoutDetails, httpHeaders);
         ResponseEntity<String> logoutCompany = restTemplate.exchange(B_URL + "/logout", HttpMethod.DELETE, logoutEntity , String.class);
         System.out.println("The status code response is: " + logoutCompany.getStatusCodeValue());
 

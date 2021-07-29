@@ -84,6 +84,7 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
         if (coupon.getCompanyID() != companyID) {
             throw new invalidCompanyException("The \"company id\" cannot be updated");
         }
+        System.out.println("top- "+coupon);
         Company companyToUpdate = companyRepository.getOne(coupon.getCompanyID());
         List<Coupon> companyCoupons = companyToUpdate.getCoupons();
         int count = 0;
@@ -103,7 +104,6 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
                 }
                 count++;
             }
-
         } else {
             int count2 = 0;
             for (Coupon coupon1 : companyCoupons) {
