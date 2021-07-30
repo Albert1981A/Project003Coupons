@@ -25,8 +25,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -94,13 +96,27 @@ public class CustomerControllerTest implements CommandLineRunner {
 
         TestUtils.testCustomerInfo("Get all Customer Coupons");
 
-        ResponseEntity<ListOfCoupons> customerCoupons = restTemplate.exchange(B_URL + "/coupons", HttpMethod.GET, entity, ListOfCoupons.class);
+        ResponseEntity<Coupon[]> customerCoupons = restTemplate.exchange(B_URL + "/coupons", HttpMethod.GET, entity, Coupon[].class);
         System.out.println("The status code response is: " + customerCoupons.getStatusCodeValue());
-        chartUtils.printCoupons(customerCoupons.getBody().getCoupons());
+        List<Coupon> coupons = Arrays.stream(customerCoupons.getBody()).collect(Collectors.toList());
+        chartUtils.printCoupons(coupons);
 
         TestUtils.testCustomerInfo("Get all Customer Coupons of a specific Category");
 
+        System.out.println("The Category to search is: " + coupon1.getCategory());
+        ResponseEntity<Coupon[]> categoryCoupons = restTemplate.exchange(B_URL + "/coupons/category/?category=" +coupon1.getCategory(), HttpMethod.GET, entity, Coupon[].class);
+        System.out.println("The status code response is: " + categoryCoupons.getStatusCodeValue());
+        List<Coupon> coupons2 = Arrays.stream(categoryCoupons.getBody()).collect(Collectors.toList());
+        chartUtils.printCoupons(coupons2);
+
         TestUtils.testCustomerInfo("Get all Customer Coupons up to a max price");
+
+        double max = 78.5;
+        System.out.println("The max price to search is: " + max);
+        ResponseEntity<Coupon[]> maxCoupons = restTemplate.exchange(B_URL + "/coupons/max-price/?max-price=" + max, HttpMethod.GET, entity, Coupon[].class);
+        System.out.println("The status code response is: " + maxCoupons.getStatusCodeValue());
+        List<Coupon> coupons3 = Arrays.stream(maxCoupons.getBody()).collect(Collectors.toList());
+        chartUtils.printCoupons(coupons3);
 
         TestUtils.testCustomerInfo("Get the logged Customer details");
 
@@ -110,9 +126,10 @@ public class CustomerControllerTest implements CommandLineRunner {
 
         TestUtils.testCustomerInfo("Find all Customers by Coupon id");
 
-//        ResponseEntity<ListOfCustomers> customersByCoupon = restTemplate.exchange(B_URL + "/customers-by-coupon-id/4", HttpMethod.GET, entity, ListOfCustomers.class);
-//        System.out.println("The status code response is: " + customersByCoupon.getStatusCodeValue());
-//        chartUtils.printCustomers(customersByCoupon.getBody().getCustomers());
+        ResponseEntity<Customer[]> customersByCoupon = restTemplate.exchange(B_URL + "/customers-by-coupon-id/4", HttpMethod.GET, entity, Customer[].class);
+        System.out.println("The status code response is: " + customersByCoupon.getStatusCodeValue());
+        List<Customer> customers = Arrays.stream(customersByCoupon.getBody()).collect(Collectors.toList());
+        chartUtils.printCustomers(customers);
 
         TestUtils.testCustomerInfo("Logout the Customer");
 

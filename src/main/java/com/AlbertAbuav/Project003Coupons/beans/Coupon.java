@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @EqualsAndHashCode(of = "id")
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@Id" /* ,resolver = CouponIdResolver.class*/)
+//@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "id" /* ,resolver = CouponIdResolver.class*/)
 @Table(name = "coupon")
 public class Coupon {
 

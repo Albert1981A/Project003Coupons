@@ -55,13 +55,13 @@ public class CustomerController extends ClientController{
         return new ResponseEntity<>(customerService.getAllCustomerCoupons(), HttpStatus.OK); //==> Return body + 200
     }
 
-    @GetMapping("coupons/by-category")  //==>  http://localhost:8080/customer-service/coupons/by-category
+    @GetMapping("coupons/category")  //==>  http://localhost:8080/customer-service/coupons/category/?category=1  (category=1)
     public ResponseEntity<?> getAllCustomerCouponsOfSpecificCategory(@RequestHeader(value = "Authorization") String token, @RequestParam("category") Category category) throws invalidCustomerException {
         return new ResponseEntity<>(customerService.getAllCustomerCouponsOfSpecificCategory(category), HttpStatus.OK); //==> Return body + 200
     }
 
-    @GetMapping("coupons/max-price")  //==>  http://localhost:8080/customer-service/coupons/max-price
-    public ResponseEntity<?> getAllCustomerCouponsUpToMaxPrice(@RequestHeader(value = "Authorization") String token, @RequestParam double maxPrice) throws invalidCustomerException {
+    @GetMapping("coupons/max-price")  //==>  http://localhost:8080/customer-service/coupons/max-price/?max-price=80.2  (max-price=80.2)
+    public ResponseEntity<?> getAllCustomerCouponsUpToMaxPrice(@RequestHeader(value = "Authorization") String token, @RequestParam(value = "max-price") double maxPrice) throws invalidCustomerException {
         return new ResponseEntity<>(customerService.getAllCustomerCouponsUpToMaxPrice(maxPrice), HttpStatus.OK); //==> Return body + 200
     }
 

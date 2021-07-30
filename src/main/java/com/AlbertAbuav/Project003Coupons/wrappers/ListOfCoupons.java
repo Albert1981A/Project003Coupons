@@ -1,9 +1,11 @@
 package com.AlbertAbuav.Project003Coupons.wrappers;
 
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,5 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ListOfCoupons {
+
+    @ToString.Exclude
+    @JsonIgnore
     private List<Coupon> coupons = new ArrayList<>();
 }
