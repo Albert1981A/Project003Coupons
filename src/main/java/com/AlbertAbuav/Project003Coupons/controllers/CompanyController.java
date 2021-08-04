@@ -65,18 +65,18 @@ public class CompanyController extends ClientController{
     }
 
     @GetMapping("coupons")  //==>  http://localhost:8080/company-service/coupons
-    public ResponseEntity<?> getAllCompanyCoupons(@RequestHeader(value = "Authorization") String token) {
-        return new ResponseEntity<>(new ListOfCoupons(companyService.getAllCompanyCoupons()), HttpStatus.OK); //==> Return body + 200
+    public ResponseEntity<?> getAllCompanyCoupons( /* @RequestHeader(value = "Authorization") String token */ ) {
+        return new ResponseEntity<>(companyService.getAllCompanyCoupons(), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("coupons/category")  //==>  http://localhost:8080/company-service/coupons/category/?category=1  (category=1)
     public ResponseEntity<?> getAllCompanyCouponsOfSpecificCategory(@RequestHeader(value = "Authorization") String token, @RequestParam(value = "category") Category category) throws invalidCompanyException {
-        return new ResponseEntity<>(new ListOfCoupons(companyService.getAllCompanyCouponsOfSpecificCategory(category)), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(companyService.getAllCompanyCouponsOfSpecificCategory(category), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("coupons/max-price")  //==>  http://localhost:8080/company-service/coupons/max-price/?max-price=80.2  (max-price=80.2)
     public ResponseEntity<?> getAllCompanyCouponsUpToMaxPrice(@RequestHeader(value = "Authorization") String token, @RequestParam(value = "max-price") double maxPrice) throws invalidCompanyException {
-        return new ResponseEntity<>(new ListOfCoupons(companyService.getAllCompanyCouponsUpToMaxPrice(maxPrice)), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(companyService.getAllCompanyCouponsUpToMaxPrice(maxPrice), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("company-details")  //==>  http://localhost:8080/company-service/company-details

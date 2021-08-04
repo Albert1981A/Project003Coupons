@@ -19,6 +19,10 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 @RequiredArgsConstructor
 @Order(8)
@@ -101,24 +105,27 @@ public class CompanyControllerTest implements CommandLineRunner {
 
         TestUtils.testCompanyInfo("Get all Company Coupons");
 
-        ResponseEntity<ListOfCoupons> companyCoupons = restTemplate.exchange(B_URL + "/coupons", HttpMethod.GET, entity, ListOfCoupons.class);
+        ResponseEntity<Coupon[]> companyCoupons = restTemplate.exchange(B_URL + "/coupons", HttpMethod.GET, entity, Coupon[].class);
         System.out.println("The status code response is: " + companyCoupons.getStatusCodeValue());
-        chartUtils.printCoupons(companyCoupons.getBody().getCoupons());
+        List<Coupon> coupons = Arrays.stream(companyCoupons.getBody()).collect(Collectors.toList());
+        chartUtils.printCoupons(coupons);
 
         TestUtils.testCompanyInfo("Get all Company Coupons of a specific Category");
 
         System.out.println("The Category to search is: " + coupon1.getCategory());
-        ResponseEntity<ListOfCoupons> categoryCoupons = restTemplate.exchange(B_URL + "/coupons/category/?category=" + coupon1.getCategory(), HttpMethod.GET, entity, ListOfCoupons.class);
+        ResponseEntity<Coupon[]> categoryCoupons = restTemplate.exchange(B_URL + "/coupons/category/?category=" + coupon1.getCategory(), HttpMethod.GET, entity, Coupon[].class);
         System.out.println("The status code response is: " + categoryCoupons.getStatusCodeValue());
-        chartUtils.printCoupons(categoryCoupons.getBody().getCoupons());
+        List<Coupon> coupons2 = Arrays.stream(categoryCoupons.getBody()).collect(Collectors.toList());
+        chartUtils.printCoupons(coupons2);
 
         TestUtils.testCompanyInfo("Get all Company Coupons up to a max price");
 
         double max = 78.2;
         System.out.println("The max price to search is: " + max);
-        ResponseEntity<ListOfCoupons> maxPriceCoupons = restTemplate.exchange(B_URL + "/coupons/max-price/?max-price=" + max, HttpMethod.GET, entity, ListOfCoupons.class);
+        ResponseEntity<Coupon[]> maxPriceCoupons = restTemplate.exchange(B_URL + "/coupons/max-price/?max-price=" + max, HttpMethod.GET, entity, Coupon[].class);
         System.out.println("The status code response is: " + maxPriceCoupons.getStatusCodeValue());
-        chartUtils.printCoupons(maxPriceCoupons.getBody().getCoupons());
+        List<Coupon> coupons3 = Arrays.stream(maxPriceCoupons.getBody()).collect(Collectors.toList());
+        chartUtils.printCoupons(coupons3);
 
         TestUtils.testCompanyInfo("Get the logged Company details");
 

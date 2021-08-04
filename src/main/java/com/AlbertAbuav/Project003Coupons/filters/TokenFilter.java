@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Component
+//@Component
 @RequiredArgsConstructor
-@Order(1)
+@Order(2)
 public class TokenFilter implements Filter {
 
     private final TokenManager tokenManager;
