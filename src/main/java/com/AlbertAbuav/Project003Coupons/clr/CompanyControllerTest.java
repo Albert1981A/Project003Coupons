@@ -4,7 +4,9 @@ import com.AlbertAbuav.Project003Coupons.beans.Category;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
+import com.AlbertAbuav.Project003Coupons.controllers.model.LoginResponse;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
+import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
 import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.AdminService;
@@ -17,10 +19,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -50,20 +58,21 @@ public class CompanyControllerTest implements CommandLineRunner {
 
         Company companyToLogin = adminService.getSingleCompany(2);
         LoginDetails loginDetails = new LoginDetails(companyToLogin.getEmail(), companyToLogin.getPassword());
-        ResponseEntity<String> loggedCompany = restTemplate.postForEntity(B_URL + "/login", loginDetails, String.class);
+        ResponseEntity<LoginResponse> loggedCompany = restTemplate.postForEntity("http://localhost:8080/client/login", loginDetails, LoginResponse.class);
         System.out.println("The status code response is: " + loggedCompany.getStatusCodeValue());
-        System.out.println("This is the Token given to the company: \n" + loggedCompany.getBody());
+        System.out.println("This is the Token given to the company: \n" + loggedCompany.getBody().getClientToken());
 
-        Information information = tokenManager.getMap().get(loggedCompany.getBody());
+        Information information = tokenManager.getMap().get(loggedCompany.getBody().getClientToken());
         companyService = (CompanyService) information.getClientFacade();
 
-        loggedToken = loggedCompany.getBody();
+        loggedToken = loggedCompany.getBody().getClientToken();
         httpHeaders.add("Authorization", loggedToken);
         entity = new HttpEntity<>("parameters", httpHeaders);
 
         TestUtils.testCompanyInfo("Add Coupon");
 
         Coupon coupon1 = factoryUtils.createCouponOfACompany(2);
+        coupon1.setImage(companyToLogin.getName() + ".jpg");
         System.out.println("this is the coupon to add:");
         chartUtils.printCoupon(coupon1);
 
@@ -83,8 +92,9 @@ public class CompanyControllerTest implements CommandLineRunner {
         couponToUpdate.setAmount(3);
         couponToUpdate.setDescription("New-Description");
 
+        chartUtils.printCoupon(couponToUpdate);
         HttpEntity<Coupon> entityU = new HttpEntity<>(couponToUpdate, httpHeaders);
-
+        System.out.println(entityU);
         ResponseEntity<String> updateCoupon = restTemplate.exchange(B_URL + "/coupons", HttpMethod.PUT, entityU, String.class);
         System.out.println("The status code response is: " + updateCoupon.getStatusCodeValue());
 
@@ -122,10 +132,17 @@ public class CompanyControllerTest implements CommandLineRunner {
 
         double max = 78.2;
         System.out.println("The max price to search is: " + max);
-        ResponseEntity<Coupon[]> maxPriceCoupons = restTemplate.exchange(B_URL + "/coupons/max-price/?max-price=" + max, HttpMethod.GET, entity, Coupon[].class);
-        System.out.println("The status code response is: " + maxPriceCoupons.getStatusCodeValue());
-        List<Coupon> coupons3 = Arrays.stream(maxPriceCoupons.getBody()).collect(Collectors.toList());
-        chartUtils.printCoupons(coupons3);
+        try {
+            ResponseEntity<Coupon[]> maxPriceCoupons = restTemplate.exchange(B_URL + "/coupons/max-price/?max-price=" + max, HttpMethod.GET, entity, Coupon[].class);
+            System.out.println("The status code response is: " + maxPriceCoupons.getStatusCodeValue());
+            List<Coupon> coupons3 = Arrays.stream(maxPriceCoupons.getBody()).collect(Collectors.toList());
+            chartUtils.printCoupons(coupons3);
+        } catch (IllegalStateException illegalStateException) {
+            System.out.println(illegalStateException.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
 
         TestUtils.testCompanyInfo("Get the logged Company details");
 
@@ -150,7 +167,7 @@ public class CompanyControllerTest implements CommandLineRunner {
 
         LogoutDetails logoutDetails = new LogoutDetails(loggedToken);
         HttpEntity<LogoutDetails> logoutEntity = new HttpEntity<>(logoutDetails, httpHeaders);
-        ResponseEntity<String> logoutCompany = restTemplate.exchange(B_URL + "/logout", HttpMethod.DELETE, logoutEntity , String.class);
+        ResponseEntity<String> logoutCompany = restTemplate.exchange("http://localhost:8080/client/logout", HttpMethod.DELETE, logoutEntity, String.class);
         System.out.println("The status code response is: " + logoutCompany.getStatusCodeValue());
 
         System.out.println();

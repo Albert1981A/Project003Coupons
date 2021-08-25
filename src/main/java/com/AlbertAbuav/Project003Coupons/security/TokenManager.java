@@ -1,11 +1,18 @@
 package com.AlbertAbuav.Project003Coupons.security;
 
+import com.AlbertAbuav.Project003Coupons.beans.Company;
+import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
+import com.AlbertAbuav.Project003Coupons.controllers.model.LoginResponse;
 import com.AlbertAbuav.Project003Coupons.exception.SecurityException;
+import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
+import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
+import com.AlbertAbuav.Project003Coupons.exception.invalidCustomerException;
+import com.AlbertAbuav.Project003Coupons.login.ClientType;
+import com.AlbertAbuav.Project003Coupons.service.CompanyService;
 import com.AlbertAbuav.Project003Coupons.serviceImpl.ClientFacade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +37,12 @@ public class TokenManager {
                 .build();
         map.put(token, information);
         return token;
+    }
+
+    public void updateToken(String token){
+        Information information = map.get(token);
+        information.setTime(LocalDateTime.now());
+        map.put(token, information);
     }
 
     public void deleteToken(String token) {

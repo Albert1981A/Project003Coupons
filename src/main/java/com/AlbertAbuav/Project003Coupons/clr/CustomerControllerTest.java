@@ -5,6 +5,7 @@ import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
+import com.AlbertAbuav.Project003Coupons.controllers.model.LoginResponse;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
 import com.AlbertAbuav.Project003Coupons.exception.invalidCustomerException;
 import com.AlbertAbuav.Project003Coupons.security.Information;
@@ -57,14 +58,14 @@ public class CustomerControllerTest implements CommandLineRunner {
 
         Customer customerToLogin = adminService.getSingleCustomer(2);
         LoginDetails loginDetails = new LoginDetails(customerToLogin.getEmail(), customerToLogin.getPassword());
-        ResponseEntity<String> loggedCustomer = restTemplate.postForEntity(B_URL + "/login", loginDetails, String.class);
+        ResponseEntity<LoginResponse> loggedCustomer = restTemplate.postForEntity("http://localhost:8080/client/login", loginDetails, LoginResponse.class);
         System.out.println("The status code response is: " + loggedCustomer.getStatusCodeValue());
         System.out.println("This is the Token given to the company: \n" + loggedCustomer.getBody());
 
-        Information information = tokenManager.getMap().get(loggedCustomer.getBody());
+        Information information = tokenManager.getMap().get(loggedCustomer.getBody().getClientToken());
         customerService = (CustomerService) information.getClientFacade();
 
-        loggedToken = loggedCustomer.getBody();
+        loggedToken = loggedCustomer.getBody().getClientToken();
         httpHeaders.add("Authorization", loggedToken);
         entity = new HttpEntity<>("parameters", httpHeaders);
 
@@ -74,15 +75,15 @@ public class CustomerControllerTest implements CommandLineRunner {
         Company companyToLogin = adminService.getSingleCompany(2);
         System.out.println("This is the Company to login:");
         LoginDetails loginDetails2 = new LoginDetails(companyToLogin.getEmail(), companyToLogin.getPassword());
-        ResponseEntity<String> loggedCompany = restTemplate.postForEntity("http://localhost:8080/company-service/login", loginDetails2, String.class);
+        ResponseEntity<LoginResponse> loggedCompany = restTemplate.postForEntity("http://localhost:8080/client/login", loginDetails2, LoginResponse.class);
         System.out.println("The status code response is: " + loggedCompany.getStatusCodeValue());
-        System.out.println("This is the Token given to the company: \n" + loggedCompany.getBody());
+        System.out.println("This is the Token given to the company: \n" + loggedCompany.getBody().getClientToken());
         System.out.println();
 
-        Information information2 = tokenManager.getMap().get(loggedCompany.getBody());
+        Information information2 = tokenManager.getMap().get(loggedCompany.getBody().getClientToken());
         companyService = (CompanyService) information2.getClientFacade();
 
-        Coupon coupon1 = companyService.getSingleCoupon(6);
+        Coupon coupon1 = companyService.getSingleCoupon(18);
         System.out.println("this is the coupon to add:");
         chartUtils.printCoupon(coupon1);
         System.out.println();
@@ -135,7 +136,7 @@ public class CustomerControllerTest implements CommandLineRunner {
 
         LogoutDetails logoutDetails = new LogoutDetails(loggedToken);
         HttpEntity<LogoutDetails> logoutEntity = new HttpEntity<>(logoutDetails, httpHeaders);
-        ResponseEntity<String> logoutCompany = restTemplate.exchange(B_URL + "/logout", HttpMethod.DELETE, logoutEntity, String.class);
+        ResponseEntity<String> logoutCompany = restTemplate.exchange("http://localhost:8080/client/logout", HttpMethod.DELETE, logoutEntity, String.class);
         System.out.println("The status code response is: " + logoutCompany.getStatusCodeValue());
 
         System.out.println();

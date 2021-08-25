@@ -1,5 +1,6 @@
 package com.AlbertAbuav.Project003Coupons.controllers.model;
 
+import com.AlbertAbuav.Project003Coupons.login.ClientType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +14,4 @@ public class LoginDetails {
 
     private String email;
     private String password;
-
 }

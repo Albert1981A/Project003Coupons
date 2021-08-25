@@ -103,12 +103,16 @@ public class InitData01 implements CommandLineRunner {
 
         try {
             Company company1 = factoryUtils.createCompany();
+            coupons1.forEach(coupon -> coupon.setImage(company1.getName() + ".jpg"));
+            System.out.println(coupons1);
             company1.setCoupons(coupons1);
             adminService.addCompany(company1);
             Company company2 = factoryUtils.createCompany();
+            coupons2.forEach(coupon -> coupon.setImage(company2.getName() + ".jpg"));
             company2.setCoupons(coupons2);
             adminService.addCompany(company2);
             Company company3 = factoryUtils.createCompany();
+            coupons3.forEach(coupon -> coupon.setImage(company3.getName() + ".jpg"));
             company3.setCoupons(coupons3);
             adminService.addCompany(company3);
             Company company4 = factoryUtils.createCompany();
@@ -128,6 +132,8 @@ public class InitData01 implements CommandLineRunner {
         } catch (invalidAdminException e) {
             System.out.println(e.getMessage());
         }
+
+
 
         try {
             chartUtils.printCompanies(adminService.getAllCompanies());

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 @Order(6)
 public class SchedulingDailyTask implements CommandLineRunner {
@@ -69,9 +69,13 @@ public class SchedulingDailyTask implements CommandLineRunner {
             System.out.println(e.getMessage());
         }
 
+        couponTo4.setImage(companyId4.getName() + "jpg");
         companyId4.getCoupons().add(couponTo4);
+        couponTo5.setImage(companyId5.getName() + "jpg");
         companyId5.getCoupons().add(couponTo5);
+        couponTo6.setImage(companyId6.getName() + "jpg");
         companyId6.getCoupons().add(couponTo6);
+        couponTo7.setImage(companyId7.getName() + "jpg");
         companyId7.getCoupons().add(couponTo7);
 
         try {

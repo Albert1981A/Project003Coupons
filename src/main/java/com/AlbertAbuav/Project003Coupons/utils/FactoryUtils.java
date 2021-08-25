@@ -124,7 +124,7 @@ public class FactoryUtils {
                 .endDate(DateUtils.javaDateFromLocalDate(LocalDate.now().plusDays(7)))
                 .amount((int) (Math.random() * 21) + 30)
                 .price((int) (Math.random() * 41) + 60)
-                .image("Image: " + COUNT2++)
+                .image("Image" + COUNT2++ + ".jpg")
                 .build();
     }
 
@@ -133,12 +133,12 @@ public class FactoryUtils {
                 .companyID(companyID)
                 .category(Category.values()[(int) (Math.random() * Category.values().length)])
                 .title("Title: " + COUNT2)
-                .description("Description: " + COUNT2)
+                .description("Description: " + COUNT2++)
                 .startDate(DateUtils.javaDateFromLocalDate(LocalDate.now().minusDays(3)))
                 .endDate(DateUtils.javaDateFromLocalDate(LocalDate.now().plusDays(7)))
                 .amount((int) (Math.random() * 21) + 30)
                 .price((int) (Math.random() * 41) + 60)
-                .image("Image: " + COUNT2++)
+                .image("Image" + companyID + ".jpg")
                 .build();
     }
 

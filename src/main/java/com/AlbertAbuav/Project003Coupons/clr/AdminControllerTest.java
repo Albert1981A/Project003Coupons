@@ -3,7 +3,9 @@ package com.AlbertAbuav.Project003Coupons.clr;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
+import com.AlbertAbuav.Project003Coupons.controllers.LogController;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
+import com.AlbertAbuav.Project003Coupons.controllers.model.LoginResponse;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
 import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
 import com.AlbertAbuav.Project003Coupons.security.Information;
@@ -51,14 +53,14 @@ public class AdminControllerTest implements CommandLineRunner {
         TestUtils.testAdminInfo("Login to Admin and receive a token");
 
         loginDetails = new LoginDetails("admin@admin.com", "admin");
-        ResponseEntity<String> loggedAdmin = restTemplate.postForEntity(B_URL + "/login", loginDetails, String.class);
+        ResponseEntity<LoginResponse> loggedAdmin = restTemplate.postForEntity("http://localhost:8080/client/login", loginDetails, LoginResponse.class);
         System.out.println("The status code response is: " + loggedAdmin.getStatusCodeValue());
         System.out.println("This is the Token given to the admin: \n" + loggedAdmin.getBody());
 
-        Information information = tokenManager.getMap().get(loggedAdmin.getBody());
+        Information information = tokenManager.getMap().get(loggedAdmin.getBody().getClientToken());
         adminService = (AdminService) information.getClientFacade();
 
-        loggedToken = loggedAdmin.getBody();
+        loggedToken = loggedAdmin.getBody().getClientToken();
         httpHeaders.add("Authorization", loggedToken);
         entity = new HttpEntity<>("parameters", httpHeaders);
 
@@ -68,12 +70,14 @@ public class AdminControllerTest implements CommandLineRunner {
         Coupon coupon2 = factoryUtils.createCouponOfACompany(11);
         List<Coupon> coupons1 = new ArrayList<>(Arrays.asList(coupon1, coupon2));
         Company company1 = factoryUtils.createCompany();
+        coupons1.forEach(coupon -> coupon.setImage(company1.getName() + ".jpg"));
         company1.setCoupons(coupons1);
 
         System.out.println("This is the company to add:");
         chartUtils.printCompany(company1);
 
         HttpEntity<Company> entity2 = new HttpEntity<>(company1, httpHeaders);
+        System.out.println(entity2);
         ResponseEntity<String> addCompany = restTemplate.exchange(B_URL + "/companies", HttpMethod.POST, entity2, String.class);
         System.out.println(addCompany.getStatusCodeValue());
 
@@ -155,14 +159,10 @@ public class AdminControllerTest implements CommandLineRunner {
         Company company8 = null;
         try {
             company8 = adminService.getSingleCompany(8);
-        } catch (invalidAdminException e) {
-            System.out.println(e.getMessage());
-        }
-
-        company8.setCoupons(companyCoupons1);
-
-        try {
-            adminService.updateCompany(company8);
+            Company finalCompany = company8;
+            companyCoupons1.forEach(coupon -> coupon.setImage(finalCompany.getName() + ".jpg"));
+            finalCompany.setCoupons(companyCoupons1);
+            adminService.updateCompany(finalCompany);
         } catch (invalidAdminException e) {
             System.out.println(e.getMessage());
         }
@@ -209,7 +209,7 @@ public class AdminControllerTest implements CommandLineRunner {
 
         LogoutDetails logoutDetails = new LogoutDetails(loggedToken);
         HttpEntity<LogoutDetails> logoutEntity = new HttpEntity<>(logoutDetails, httpHeaders);
-        ResponseEntity<String> logoutAdmin = restTemplate.exchange(B_URL + "/logout", HttpMethod.DELETE, logoutEntity , String.class);
+        ResponseEntity<String> logoutAdmin = restTemplate.exchange("http://localhost:8080/client/logout", HttpMethod.DELETE, logoutEntity , String.class);
         System.out.println("The status code response is: " + logoutAdmin.getStatusCodeValue());
 
         System.out.println();
