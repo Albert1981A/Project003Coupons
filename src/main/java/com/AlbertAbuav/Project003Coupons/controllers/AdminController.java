@@ -25,6 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("admin-service")  //==>  http://localhost:8080/admin-service
 @RequiredArgsConstructor
@@ -47,17 +49,6 @@ public class AdminController {
 //    public ResponseEntity<?> logOut(@RequestHeader(value = "Authorization") String token, @RequestBody LogoutDetails logoutDetails) {
 //        tokenManager.deleteToken(logoutDetails.getToken());
 //        return new ResponseEntity<>(HttpStatus.NO_CONTENT);  //==> Return 204 (ok and no content)
-//    }
-
-//    public LoginResponse login(LoginDetails loginDetails) throws invalidCompanyException, invalidAdminException, invalidCustomerException {
-//        String token = loginManager.login(loginDetails.getEmail(), loginDetails.getPassword(), ClientType.ADMINISTRATOR);
-//        Information information = tokenManager.getMap().get(token);
-//        adminService = (AdminService) information.getClientFacade();
-//        loginResponse.setClientEmail("admin@admin.com");
-//        loginResponse.setClientName("Admin");
-//        loginResponse.setClientType(ClientType.ADMINISTRATOR);
-//        loginResponse.setClientToken(token);
-//        return loginResponse;
 //    }
 
     public AdminService getAdminService(String token) {
@@ -95,7 +86,8 @@ public class AdminController {
     public ResponseEntity<?> getAllCompanies(@RequestHeader(value = "Authorization") String token) throws invalidAdminException {
         tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
-        return new ResponseEntity<>(new ListOfCompanies(adminService.getAllCompanies()), HttpStatus.OK); //==> Return body + 200
+        //return new ResponseEntity<List<Company>>(adminService.getAllCompanies(), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(adminService.getAllCompanies(), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("companies/{id}")  // ==>  http://localhost:8080/admin-service/companies/1  (id=1)
@@ -134,7 +126,8 @@ public class AdminController {
     public ResponseEntity<?> getAllCustomers(@RequestHeader(value = "Authorization") String token) throws invalidAdminException {
         tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
-        return new ResponseEntity<>(new ListOfCustomers(adminService.getAllCustomers()), HttpStatus.OK); //==> Return body + 200
+        //return new ResponseEntity<>(new ListOfCustomers(adminService.getAllCustomers()), HttpStatus.OK); //==> Return body + 200
+        return new ResponseEntity<>(adminService.getAllCustomers(), HttpStatus.OK); //==> Return body + 200
     }
 
     @GetMapping("customers/{id}")  // ==>  http://localhost:8080/admin-service/customers/1  (id=1)

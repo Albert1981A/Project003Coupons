@@ -18,7 +18,7 @@ import java.util.List;
 @Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @EqualsAndHashCode(of = "id")
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@Id")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@Id")
 //@JsonIdentityInfo(property = "id", generator = ObjectIdGenerators.PropertyGenerator.class)
 public class Customer {
 
@@ -33,7 +33,7 @@ public class Customer {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Singular
     @ToString.Exclude
-    @JsonIgnore
+//    @JsonIgnore
     private List<Coupon> coupons = new ArrayList<>();
 
     @Override

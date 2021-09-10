@@ -48,19 +48,6 @@ public class CustomerController {
 //        return new ResponseEntity<>(HttpStatus.NO_CONTENT);  //==> Return 204 (ok and no content)
 //    }
 
-//    public LoginResponse login(LoginDetails loginDetails) throws invalidCompanyException, invalidAdminException, invalidCustomerException {
-//        String token = loginManager.login(loginDetails.getEmail(), loginDetails.getPassword(), ClientType.CUSTOMER);
-//        Information information = tokenManager.getMap().get(token);
-//        customerService = (CustomerService) information.getClientFacade();
-//        Customer customer = customerService.getTheLoggedCustomerDetails();
-//        loginResponse.setClientId(customer.getId());
-//        loginResponse.setClientEmail(customer.getEmail());
-//        loginResponse.setClientName(customer.getFirstName());
-//        loginResponse.setClientType(ClientType.CUSTOMER);
-//        loginResponse.setClientToken(token);
-//        return loginResponse;
-//    }
-
     public CustomerService getCustomerService(String token) {
         Information information = tokenManager.getMap().get(token);
         return (CustomerService) information.getClientFacade();

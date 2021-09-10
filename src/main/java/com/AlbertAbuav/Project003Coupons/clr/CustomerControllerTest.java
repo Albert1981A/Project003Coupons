@@ -114,10 +114,16 @@ public class CustomerControllerTest implements CommandLineRunner {
 
         double max = 78.5;
         System.out.println("The max price to search is: " + max);
+        try {
         ResponseEntity<Coupon[]> maxCoupons = restTemplate.exchange(B_URL + "/coupons/max-price/?max-price=" + max, HttpMethod.GET, entity, Coupon[].class);
         System.out.println("The status code response is: " + maxCoupons.getStatusCodeValue());
         List<Coupon> coupons3 = Arrays.stream(maxCoupons.getBody()).collect(Collectors.toList());
         chartUtils.printCoupons(coupons3);
+        } catch (IllegalStateException illegalStateException) {
+            System.out.println(illegalStateException.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
         TestUtils.testCustomerInfo("Get the logged Customer details");
 

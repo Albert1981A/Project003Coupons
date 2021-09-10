@@ -27,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -123,9 +124,11 @@ public class AdminControllerTest implements CommandLineRunner {
 
         TestUtils.testAdminInfo("Get all Companies");
 
-        ResponseEntity<ListOfCompanies> getAllCompanies = restTemplate.exchange(B_URL + "/companies", HttpMethod.GET, entity, ListOfCompanies.class);
+        ResponseEntity<Company[]> getAllCompanies = restTemplate.exchange(B_URL + "/companies", HttpMethod.GET, entity, Company[].class);
         System.out.println("The status code response is: " + getAllCompanies.getStatusCodeValue());
-        chartUtils.printCompanies(getAllCompanies.getBody().getCompanies());
+        //Arrays.stream(getAllCompanies.getBody()).forEach(System.out::println);
+        List<Company> companies = Arrays.stream(getAllCompanies.getBody()).collect(Collectors.toList());
+        chartUtils.printCompanies(companies);
 
         TestUtils.testAdminInfo("Get single Company");
 
@@ -195,9 +198,11 @@ public class AdminControllerTest implements CommandLineRunner {
 
         TestUtils.testAdminInfo("Get all Customers");
 
-        ResponseEntity<ListOfCustomers> getAllCustomers = restTemplate.exchange(B_URL + "/customers", HttpMethod.GET, entity, ListOfCustomers.class);
+        ResponseEntity<Customer[]> getAllCustomers = restTemplate.exchange(B_URL + "/customers", HttpMethod.GET, entity, Customer[].class);
         System.out.println("The status code response is: " + getAllCustomers.getStatusCodeValue());
-        chartUtils.printCustomers(getAllCustomers.getBody().getCustomers());
+//        chartUtils.printCustomers(getAllCustomers.getBody().getCustomers());
+        List<Customer> customers = Arrays.stream(getAllCustomers.getBody()).collect(Collectors.toList());
+        chartUtils.printCustomers(customers);
 
         TestUtils.testAdminInfo("Get single Customer");
 

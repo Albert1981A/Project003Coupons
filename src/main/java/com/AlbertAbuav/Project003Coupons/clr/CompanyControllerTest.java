@@ -95,8 +95,10 @@ public class CompanyControllerTest implements CommandLineRunner {
         chartUtils.printCoupon(couponToUpdate);
         HttpEntity<Coupon> entityU = new HttpEntity<>(couponToUpdate, httpHeaders);
         System.out.println(entityU);
-        ResponseEntity<String> updateCoupon = restTemplate.exchange(B_URL + "/coupons", HttpMethod.PUT, entityU, String.class);
+        ResponseEntity<Coupon> updateCoupon = restTemplate.exchange(B_URL + "/coupons", HttpMethod.PUT, entityU, Coupon.class);
         System.out.println("The status code response is: " + updateCoupon.getStatusCodeValue());
+        System.out.println("The coupon after the update:");
+        chartUtils.printCoupon(updateCoupon.getBody());
 
         System.out.println("This is the company details after updating the coupon:");
         chartUtils.printCompany(companyService.getTheLoggedCompanyDetails());

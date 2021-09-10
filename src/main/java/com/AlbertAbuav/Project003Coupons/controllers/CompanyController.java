@@ -60,19 +60,6 @@ public class CompanyController {
 //        return new ResponseEntity<>(HttpStatus.NO_CONTENT);  //==> Return 204 (ok and no content)
 //    }
 
-//    public LoginResponse login(LoginDetails loginDetails) throws invalidCompanyException, invalidAdminException, invalidCustomerException {
-//        String token = loginManager.login(loginDetails.getEmail(), loginDetails.getPassword(), ClientType.COMPANY);
-//        Information information = tokenManager.getMap().get(token);
-//        companyService = (CompanyService) information.getClientFacade();
-//        Company company = companyService.getTheLoggedCompanyDetails();
-//        loginResponse.setClientId(company.getId());
-//        loginResponse.setClientEmail(company.getEmail());
-//        loginResponse.setClientName(company.getName());
-//        loginResponse.setClientType(ClientType.COMPANY);
-//        loginResponse.setClientToken(token);
-//        return loginResponse;
-//    }
-
     public CompanyService getCompanyService(String token) {
         Information information = tokenManager.getMap().get(token);
         return (CompanyService) information.getClientFacade();
@@ -89,13 +76,25 @@ public class CompanyController {
         return new ResponseEntity<>(couponAdded, HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
+    @ResponseStatus(code= HttpStatus.CREATED)
     @PutMapping("coupons") // ==>  http://localhost:8080/company-service/coupons
     public ResponseEntity<?> updateCoupon(@RequestHeader(value = "Authorization") String token, @RequestBody Coupon coupon) throws invalidCompanyException {
         tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         companyService.updateCoupon(coupon);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
+        Coupon couponAdded = couponRepository.getOne(coupon.getId());
+        return new ResponseEntity<>(couponAdded, HttpStatus.CREATED);  //==> Return 201 (created)
     }
+
+//    @PutMapping("coupons") // ==>  http://localhost:8080/company-service/coupons
+//    public ResponseEntity<?> updateCoupon(@RequestHeader(value = "Authorization") String token, @RequestBody Coupon coupon) throws invalidCompanyException {
+//        tokenManager.updateToken(token); //update the token time to current time
+//        companyService = getCompanyService(token);
+//        companyService.updateCoupon(coupon);
+//        Coupon updated = couponRepository.getOne(coupon.getId());
+//        System.out.println("THIS IS THE UPDATED COUPON: \n" +updated);
+//        return new ResponseEntity<>(updated, HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
+//    }
 
     @DeleteMapping("coupons/{id}")  // ==>  http://localhost:8080/company-service/coupons/1  (id=1)
     public ResponseEntity<?> deleteCoupon(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidCompanyException {
