@@ -15,5 +15,6 @@ public interface CustomerService {
     List<Coupon> getAllCustomerCouponsUpToMaxPrice(double maxPrice) throws invalidCustomerException;
     Customer getTheLoggedCustomerDetails();
     List<Customer> findAllCustomersByCouponId(int couponID);
+    Coupon getOneByCouponId(int couponID);
 
 }

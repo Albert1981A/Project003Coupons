@@ -138,6 +138,10 @@ public class CustomerServiceImpl extends ClientFacade implements CustomerService
         return customerRepository.findAllByCoupons_Id(couponID);
     }
 
+    @Override
+    public Coupon getOneByCouponId(int couponID) {
+        return couponRepository.getOne(couponID);
+    }
 
 
 }

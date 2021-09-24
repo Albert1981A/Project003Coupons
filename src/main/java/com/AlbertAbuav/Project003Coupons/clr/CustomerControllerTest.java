@@ -60,7 +60,7 @@ public class CustomerControllerTest implements CommandLineRunner {
         LoginDetails loginDetails = new LoginDetails(customerToLogin.getEmail(), customerToLogin.getPassword());
         ResponseEntity<LoginResponse> loggedCustomer = restTemplate.postForEntity("http://localhost:8080/client/login", loginDetails, LoginResponse.class);
         System.out.println("The status code response is: " + loggedCustomer.getStatusCodeValue());
-        System.out.println("This is the Token given to the company: \n" + loggedCustomer.getBody());
+        System.out.println("This is the Token given to the customer: \n" + loggedCustomer.getBody());
 
         Information information = tokenManager.getMap().get(loggedCustomer.getBody().getClientToken());
         customerService = (CustomerService) information.getClientFacade();
@@ -83,7 +83,7 @@ public class CustomerControllerTest implements CommandLineRunner {
         Information information2 = tokenManager.getMap().get(loggedCompany.getBody().getClientToken());
         companyService = (CompanyService) information2.getClientFacade();
 
-        Coupon coupon1 = companyService.getSingleCoupon(18);
+        Coupon coupon1 = companyService.getSingleCoupon(20);
         System.out.println("this is the coupon to add:");
         chartUtils.printCoupon(coupon1);
         System.out.println();

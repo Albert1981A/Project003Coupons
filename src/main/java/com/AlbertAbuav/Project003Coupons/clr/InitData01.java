@@ -32,8 +32,8 @@ public class InitData01 implements CommandLineRunner {
      * Invoking the LoginManager to login to the requested facade
      */
     private final LoginManager loginManager;
-    private AdminService adminService;
     private final TokenManager tokenManager;
+    private AdminService adminService;
 
     @Override
     public void run(String... args) {

@@ -24,6 +24,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("customer-service")  //==>  http://localhost:8080/customer-service
 @RequiredArgsConstructor
@@ -58,7 +61,14 @@ public class CustomerController {
         tokenManager.updateToken(token); //update the token time to current time
         customerService = getCustomerService(token);
         customerService.addCoupon(coupon);
-        return new ResponseEntity<>(HttpStatus.CREATED);  //==> Return 201 (created)
+        List<Coupon> coupons = customerService.getTheLoggedCustomerDetails().getCoupons();
+        Coupon added = null;
+        for (Coupon coupon1 : coupons) {
+            if (coupon.getId() == coupon1.getId()) {
+                added = coupon1;
+            }
+        }
+        return new ResponseEntity<>(added, HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
     @GetMapping("coupons")  //==>  http://localhost:8080/customer-service/coupons

@@ -28,6 +28,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Integer> {
     boolean existsByCustomers_IdAndId(int customerID, int couponID);
     List<Coupon> findAllByEndDateBefore(Date endDate);
 
+
     /**
      * 10% Query("...")
      * HQL = Hibernate Query Language

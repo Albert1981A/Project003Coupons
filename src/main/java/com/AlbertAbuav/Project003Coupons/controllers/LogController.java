@@ -1,6 +1,7 @@
 package com.AlbertAbuav.Project003Coupons.controllers;
 
 import com.AlbertAbuav.Project003Coupons.beans.Company;
+import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginResponse;
@@ -23,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("client")  //==>  http://localhost:8080/client
@@ -55,5 +58,11 @@ public class LogController {
     public ResponseEntity<?> logOut(@RequestHeader(value = "Authorization") String token) {
         tokenManager.deleteToken(token);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);  //==> Return 204 (ok and no content)
+    }
+
+    @GetMapping("coupons")  //==>  http://localhost:8080/client/coupons
+    public ResponseEntity<?> getAllCoupons() {
+        List<Coupon> coupons = couponRepository.findAll();
+        return new ResponseEntity<>(coupons, HttpStatus.OK); //==> Return body + 200
     }
 }

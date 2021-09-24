@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.List;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 @Order(3)
 public class CompanyServiceTest implements CommandLineRunner {
@@ -126,6 +126,13 @@ public class CompanyServiceTest implements CommandLineRunner {
 
         TestUtils.testCompanyInfo("Adding a new Coupon to Company id - 3");
 
+        Company company3 = null;
+        try {
+            company3 = adminService.getSingleCompany(3);
+        } catch (invalidAdminException e) {
+            System.out.println(e.getMessage());
+        }
+
         Coupon couponToAdd1 = Coupon.builder()
                 .companyID(3)
                 .category(Category.VACATIONS_ABROAD)
@@ -135,7 +142,7 @@ public class CompanyServiceTest implements CommandLineRunner {
                 .endDate(DateUtils.javaDateFromLocalDate(LocalDate.now().plusDays(7)))
                 .amount((int) (Math.random() * 21) + 30)
                 .price((int) (Math.random() * 41) + 60)
-                .image("New Image1")
+                .image(company3.getName() + ".jpg")
                 .build();
         System.out.println("Attempting to add this Coupon: ");
         chartUtils.printCoupon(couponToAdd1);
@@ -168,7 +175,7 @@ public class CompanyServiceTest implements CommandLineRunner {
                 .endDate(DateUtils.javaDateFromLocalDate(LocalDate.now().plusDays(7)))
                 .amount((int) (Math.random() * 21) + 30)
                 .price((int) (Math.random() * 41) + 60)
-                .image("New Image2")
+                .image(company3.getName() + ".jpg")
                 .build();
         System.out.println("Attempting to add this coupon: ");
         chartUtils.printCoupon(couponToAdd2);
@@ -304,7 +311,9 @@ public class CompanyServiceTest implements CommandLineRunner {
 
         System.out.println("The coupon after the update:");
         try {
+            System.out.println("The coupon id number 4 wasn't changed after the update:");
             chartUtils.printCoupon(companyService.getSingleCoupon(4));
+            System.out.println("The coupon id number 5 wasn't changed after the update:");
             chartUtils.printCoupon(companyService.getSingleCoupon(5));
         } catch (invalidCompanyException e) {
             System.out.println(e.getMessage());

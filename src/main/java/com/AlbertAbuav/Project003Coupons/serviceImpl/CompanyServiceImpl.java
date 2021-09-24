@@ -113,11 +113,16 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
                     companyRepository.saveAndFlush(companyToUpdate);
                     System.out.println("UPDATE-2");
                     return;
-                } else if (coupon1.getId() != coupon.getId()) {
-                    throw new invalidCompanyException("The \"coupon id\" cannot be updated-2");
                 }
                 count2++;
+//                } else if (coupon1.getId() != coupon.getId()) {
+//                    System.out.println("coupon1.getId() - inside coupon: " + coupon1.getId());
+//                    System.out.println("coupon.getId() - sent coupon: " + coupon.getId());
+//                    System.out.println("Hi... Im here 4");
+//                    throw new invalidCompanyException("The \"coupon id\" cannot be updated-2");
+//                }
             }
+            throw new invalidCompanyException("The \"coupon id\" cannot be updated-2");
         }
     }
 
