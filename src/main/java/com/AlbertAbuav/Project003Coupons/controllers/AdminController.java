@@ -56,21 +56,25 @@ public class AdminController {
         return (AdminService) information.getClientFacade();
     }
 
+    @ResponseStatus(code= HttpStatus.CREATED)
     @PostMapping("companies") // ==>  http://localhost:8080/admin-service/companies
     public ResponseEntity<?> addCompany(@RequestHeader(value = "Authorization") String token, @RequestBody Company company) throws invalidAdminException {
         tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         System.out.println(company);
         adminService.addCompany(company);
-        return new ResponseEntity<>(HttpStatus.CREATED);  //==> Return 201 (created)
+        Company added = adminService.getSingleCompany(company.getId());
+        return new ResponseEntity<>(added, HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
+    @ResponseStatus(code= HttpStatus.CREATED)
     @PutMapping("companies") // ==>  http://localhost:8080/admin-service/companies
     public ResponseEntity<?> updateCompany(@RequestHeader(value = "Authorization") String token, @RequestBody Company company) throws invalidAdminException {
         tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         adminService.updateCompany(company);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
+        Company updated = adminService.getSingleCompany(company.getId());
+        return new ResponseEntity<>(updated, HttpStatus.CREATED); //==> Return 201 (created)
     }
 
     @DeleteMapping("companies/{id}")  // ==>  http://localhost:8080/admin-service/companies/1  (id=1)
@@ -97,20 +101,24 @@ public class AdminController {
         return new ResponseEntity<>(adminService.getSingleCompany(id), HttpStatus.OK); //==> Return body + 200
     }
 
+    @ResponseStatus(code= HttpStatus.CREATED)
     @PostMapping("customers") // ==>  http://localhost:8080/admin-service/customers
     public ResponseEntity<?> addCustomer(@RequestHeader(value = "Authorization") String token, @RequestBody Customer customer) throws invalidAdminException {
         tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         adminService.addCustomer(customer);
-        return new ResponseEntity<>(HttpStatus.CREATED);  //==> Return 201 (created)
+        Customer added = adminService.getSingleCustomer(customer.getId());
+        return new ResponseEntity<>(added, HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
+    @ResponseStatus(code= HttpStatus.CREATED)
     @PutMapping("customers") // ==>  http://localhost:8080/admin-service/customers
     public ResponseEntity<?> updateCustomer(@RequestHeader(value = "Authorization") String token, @RequestBody Customer customer) throws invalidAdminException {
         tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         adminService.updateCustomer(customer);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
+        Customer updated = adminService.getSingleCustomer(customer.getId());
+        return new ResponseEntity<>(updated, HttpStatus.CREATED); //==> Return 201 (created)
     }
 
     @DeleteMapping("customers/{id}")  // ==>  http://localhost:8080/admin-service/customers/1  (id=1)
