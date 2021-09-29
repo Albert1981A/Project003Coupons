@@ -8,6 +8,7 @@ import com.AlbertAbuav.Project003Coupons.repositories.CustomerRepository;
 import com.AlbertAbuav.Project003Coupons.service.CompanyService;
 import com.AlbertAbuav.Project003Coupons.utils.ChartUtils;
 import com.AlbertAbuav.Project003Coupons.utils.Colors;
+import com.AlbertAbuav.Project003Coupons.utils.CouponComponentsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
 
     @Autowired
     private ChartUtils chartUtils;
+
+    @Autowired
+    private CouponComponentsUtils couponComponentsUtils;
 
     private int companyID;
 
@@ -77,6 +81,7 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
      *
      * @param coupon Coupon
      */
+
     public void updateCoupon(Coupon coupon) throws invalidCompanyException {
         if (Objects.isNull(coupon)) {
             throw new invalidCompanyException("There is no coupon like you entered!");
@@ -84,46 +89,11 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
         if (coupon.getCompanyID() != companyID) {
             throw new invalidCompanyException("The \"company id\" cannot be updated");
         }
-        System.out.println("top- "+coupon);
         Company companyToUpdate = companyRepository.getOne(coupon.getCompanyID());
         List<Coupon> companyCoupons = companyToUpdate.getCoupons();
-        int count = 0;
-        if (couponRepository.existsByCompanyIDAndTitle(companyID, coupon.getTitle())) {
-            for (Coupon coupon1 : companyCoupons) {
-                if (coupon1.getId() != coupon.getId() && coupon1.getTitle().equals(coupon.getTitle())) {
-                    throw new invalidCompanyException("The \"coupon id\" cannot be updated-1");
-                }
-            }
-            for (Coupon coupon1 : companyCoupons) {
-                if (coupon1.getId() == coupon.getId()) {
-                    companyCoupons.set(count, coupon);
-                    companyToUpdate.setCoupons(companyCoupons);
-                    companyRepository.saveAndFlush(companyToUpdate);
-                    System.out.println("UPDATE-1");
-                    return;
-                }
-                count++;
-            }
-        } else {
-            int count2 = 0;
-            for (Coupon coupon1 : companyCoupons) {
-                if (coupon1.getId() == coupon.getId() && coupon1.getCategory().equals(coupon.getCategory())) {
-                    companyCoupons.set(count2, coupon);
-                    companyToUpdate.setCoupons(companyCoupons);
-                    companyRepository.saveAndFlush(companyToUpdate);
-                    System.out.println("UPDATE-2");
-                    return;
-                }
-                count2++;
-//                } else if (coupon1.getId() != coupon.getId()) {
-//                    System.out.println("coupon1.getId() - inside coupon: " + coupon1.getId());
-//                    System.out.println("coupon.getId() - sent coupon: " + coupon.getId());
-//                    System.out.println("Hi... Im here 4");
-//                    throw new invalidCompanyException("The \"coupon id\" cannot be updated-2");
-//                }
-            }
-            throw new invalidCompanyException("The \"coupon id\" cannot be updated-2");
-        }
+
+        companyToUpdate.setCoupons(couponComponentsUtils.updateCouponList(companyCoupons, coupon, companyID));
+        companyRepository.saveAndFlush(companyToUpdate);
     }
 
     /**
@@ -132,6 +102,7 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
      *
      * @param coupon Coupon
      */
+
     public void deleteCoupon(Coupon coupon) throws invalidCompanyException {
         if (Objects.isNull(coupon)) {
             throw new invalidCompanyException("There is no coupon like you entered");
@@ -141,22 +112,8 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
         } else if (coupon.getCompanyID() != companyID) {
             throw new invalidCompanyException("you can not delete other companies coupons!");
         }
-        List<Customer> couponCustomers = customerRepository.findAllByCoupons_Id(coupon.getId());
-        System.out.println("Customers that purchase this coupon id-" + coupon.getId());
-        chartUtils.printCustomers(couponCustomers);
-        System.out.println();
-        List<Coupon> customerCoupons = null;
-        for (Customer customer : couponCustomers) {
-            customerCoupons = customer.getCoupons();
-            customerCoupons.removeIf(coupon1 -> coupon1.getId() == coupon.getId());
-            customer.setCoupons(customerCoupons);
-            customerRepository.saveAndFlush(customer);
-            System.out.println("customer coupons after deleting coupon id-" + coupon.getId() + " and updating the data base:");
-            chartUtils.printCustomer(customerRepository.getOne(customer.getId()));
-        }
-        Company company = companyRepository.getOne(coupon.getCompanyID());
-        company.getCoupons().removeIf(coupon1 -> coupon1.getId() == coupon.getId());
-        companyRepository.saveAndFlush(company);
+        couponComponentsUtils.deleteSingleCouponFromListOfCustomers(coupon);
+        couponComponentsUtils.deleteCouponFromCompany(coupon);
         couponRepository.delete(coupon);
         Colors.setYellowBoldPrint("DELETED: | ");
         chartUtils.printCoupon(coupon);
