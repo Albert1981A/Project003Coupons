@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -86,6 +87,7 @@ public class CompanyControllerTest implements CommandLineRunner {
         TestUtils.testCompanyInfo("Update Coupon");
 
         Coupon couponToUpdate = companyService.getSingleCoupon(5);
+        couponToUpdate.setEndDate(DateUtils.javaDateFromLocalDate(LocalDate.now().plusDays(7)));
         System.out.println("This is the Coupon to update: ");
         chartUtils.printCoupon(couponToUpdate);
 

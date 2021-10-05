@@ -71,6 +71,7 @@ public class CompanyController {
         tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         // System.out.println(companyService.getTheLoggedCompanyDetails());
+//        System.out.println(coupon);
         companyService.addCoupon(coupon);
         Coupon couponAdded = couponRepository.findByCompanyIDAndTitle(coupon.getCompanyID(), coupon.getTitle());
         return new ResponseEntity<>(couponAdded, HttpStatus.CREATED);  //==> Return 201 (created)

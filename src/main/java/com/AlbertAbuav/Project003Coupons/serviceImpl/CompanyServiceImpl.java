@@ -69,6 +69,9 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
         if (couponRepository.existsByCompanyIDAndTitle(coupon.getCompanyID(), coupon.getTitle())) {
             throw new invalidCompanyException("Cannot add a coupon with the same title to an existing coupon of the same company!");
         }
+        if (coupon.getEndDate().before(coupon.getStartDate())) {
+            throw new invalidCompanyException("The end date is before the start date");
+        }
         Company company = companyRepository.getOne(coupon.getCompanyID());
         company.getCoupons().add(coupon);
         companyRepository.saveAndFlush(company);
@@ -88,6 +91,9 @@ public class CompanyServiceImpl extends ClientFacade implements CompanyService {
         }
         if (coupon.getCompanyID() != companyID) {
             throw new invalidCompanyException("The \"company id\" cannot be updated");
+        }
+        if (coupon.getEndDate().before(coupon.getStartDate())) {
+            throw new invalidCompanyException("The end date is before the start date");
         }
         Company companyToUpdate = companyRepository.getOne(coupon.getCompanyID());
         List<Coupon> companyCoupons = companyToUpdate.getCoupons();
