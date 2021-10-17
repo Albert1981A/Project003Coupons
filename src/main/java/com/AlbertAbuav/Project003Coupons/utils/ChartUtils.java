@@ -23,9 +23,9 @@ public class ChartUtils {
     private final String DATE_FORMAT = "dd/MM/yyyy";
     private final DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
 
-    private final String COMPANY_HEADER = String.format("%s %3s %s %15s %s %30s %s %15s %s", "||", "Id", "|", centerString("Name", 15), "|", centerString("Email", 30), "|" , centerString("Password", 15), "||");
-    private final String COMPANY_THIN_SEPARATION_LINE = String.format("%s", "------------------------------------------------------------------------------");
-    private final String COMPANY_THICK_SEPARATION_LINE = String.format("%s", "==============================================================================");
+    private final String COMPANY_HEADER = String.format("%s %3s %s %15s %s %30s %s %15s %s %50s %s", "||", "Id", "|", centerString("Name", 15), "|", centerString("Email", 30), "|" , centerString("Password", 15), "|" , centerString("Image", 50) , "||");
+    private final String COMPANY_THIN_SEPARATION_LINE = String.format("%s", "-----------------------------------------------------------------------------------------------------------------------------------");
+    private final String COMPANY_THICK_SEPARATION_LINE = String.format("%s", "===================================================================================================================================");
     private final String CUSTOMER_HEADER = String.format("%s %3s %s %20s %s %20s %s %30s %s %15s %s", "||", "Id", "|", centerString("First name", 20), "|", centerString("Last name", 20), "|", centerString("Email", 30), "|" , centerString("Password", 15), "||");
     private final String CUSTOMER_THIN_SEPARATION_LINE = String.format("%s", "----------------------------------------------------------------------------------------------------------");
     private final String CUSTOMER_THICK_SEPARATION_LINE = String.format("%s", "==========================================================================================================");
@@ -53,9 +53,15 @@ public class ChartUtils {
     }
 
     public void printCompanyDetails(Company c) {
+        String imageDetails;
+        if (c.getImage().getId() == null) {
+            imageDetails = "null";
+        } else {
+            imageDetails = c.getImage().getId().toString();
+        }
         String COMPANY_VERTICAL = Colors.CYAN_BOLD + "|" + Colors.RESET;
         String COMPANY_TWO_VERTICAL = Colors.CYAN_BOLD + "||" + Colors.RESET;
-        System.out.printf("%s %3d %s %15s %s %30s %s %15s %s%n", COMPANY_TWO_VERTICAL, c.getId(), COMPANY_VERTICAL, centerString(c.getName(),15), COMPANY_VERTICAL, centerString(c.getEmail(), 30), COMPANY_VERTICAL, centerString(c.getPassword(), 15), COMPANY_TWO_VERTICAL);
+        System.out.printf("%s %3d %s %15s %s %30s %s %15s %s %50s %s%n", COMPANY_TWO_VERTICAL, c.getId(), COMPANY_VERTICAL, centerString(c.getName(),15), COMPANY_VERTICAL, centerString(c.getEmail(), 30), COMPANY_VERTICAL, centerString(c.getPassword(), 15), COMPANY_VERTICAL, centerString(imageDetails, 50), COMPANY_TWO_VERTICAL);
         Colors.setCyanBoldPrint(COMPANY_THIN_SEPARATION_LINE);
         //System.out.printf("%10s %77s %s%n", Colors.CYAN_BOLD + "|| Coupons:" + Colors.RESET, Colors.CYAN_BOLD + "||" + Colors.RESET, PrintUtils.listToString(c.getCoupons()));
         printCoupons(c.getCoupons());

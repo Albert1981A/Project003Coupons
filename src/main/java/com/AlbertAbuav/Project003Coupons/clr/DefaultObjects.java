@@ -17,6 +17,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,23 +53,23 @@ public class DefaultObjects implements CommandLineRunner {
         Coupon coupon2 = factoryUtils.createCouponOfACompany(12);
         Coupon coupon3 = factoryUtils.createCouponOfACompany(12);
 
-        Company company = factoryUtils.createCompany();
-        company.setEmail("company@company.com");
-        company.setPassword("company");
-
-        coupon1.setImage(company.getName() + ".jpg");
-        coupon2.setImage(company.getName() + ".jpg");
-        coupon3.setImage(company.getName() + ".jpg");
-        List<Coupon> coupons = new ArrayList<>(Arrays.asList(coupon1, coupon2, coupon3));
-
-        company.setCoupons(coupons);
-
-        System.out.println("This is the company to add: ");
-        chartUtils.printCompany(company);
-
         try {
+            Company company = factoryUtils.createCompany();
+            System.out.println(company);
+            company.setEmail("company@company.com");
+            company.setPassword("company");
+            coupon1.setImage(company.getName() + ".jpg");
+            coupon2.setImage(company.getName() + ".jpg");
+            coupon3.setImage(company.getName() + ".jpg");
+            List<Coupon> coupons = new ArrayList<>(Arrays.asList(coupon1, coupon2, coupon3));
+
+            company.setCoupons(coupons);
+
+            System.out.println("This is the company to add: ");
+            chartUtils.printCompany(company);
+
             adminService.addCompany(company);
-        } catch (invalidAdminException e) {
+        } catch (IOException | invalidAdminException e) {
             System.out.println(e.getMessage());
         }
 

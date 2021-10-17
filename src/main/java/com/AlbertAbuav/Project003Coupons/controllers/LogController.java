@@ -1,5 +1,6 @@
 package com.AlbertAbuav.Project003Coupons.controllers;
 
+import com.AlbertAbuav.Project003Coupons.beans.Category;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
@@ -96,7 +97,7 @@ public class LogController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);  //==> Return 204 (ok and no content)
     }
 
-    @GetMapping("coupons")  //==>  http://localhost:8080/client/coupons
+    @GetMapping("get-coupons")  //==>  http://localhost:8080/client/get-coupons
     public ResponseEntity<?> getAllCoupons() {
         List<Coupon> coupons = couponRepository.findAll();
         return new ResponseEntity<>(coupons, HttpStatus.OK); //==> Return body + 200

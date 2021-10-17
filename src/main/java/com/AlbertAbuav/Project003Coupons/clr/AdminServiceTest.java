@@ -9,14 +9,13 @@ import com.AlbertAbuav.Project003Coupons.login.ClientType;
 import com.AlbertAbuav.Project003Coupons.login.LoginManager;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.AdminService;
-import com.AlbertAbuav.Project003Coupons.utils.ArtUtils;
-import com.AlbertAbuav.Project003Coupons.utils.ChartUtils;
-import com.AlbertAbuav.Project003Coupons.utils.Colors;
-import com.AlbertAbuav.Project003Coupons.utils.TestUtils;
+import com.AlbertAbuav.Project003Coupons.utils.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Component;
 public class AdminServiceTest implements CommandLineRunner {
 
     private final ChartUtils chartUtils;
+    private final FactoryUtils factoryUtils;
 
     /**
      * Invoking the LoginManager to login to the requested facade
@@ -51,6 +51,13 @@ public class AdminServiceTest implements CommandLineRunner {
         }
 
         TestUtils.testAdminInfo("Attempting to add a Company with an existing name");
+
+        try {
+            Company companyNew = factoryUtils.createCompany();
+            System.out.println(companyNew.getImage().getId());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
         Company companyToTest1 = null;
         try {

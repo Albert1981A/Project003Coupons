@@ -3,12 +3,14 @@ package com.AlbertAbuav.Project003Coupons.controllers;
 import com.AlbertAbuav.Project003Coupons.beans.Category;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
+import com.AlbertAbuav.Project003Coupons.beans.Image;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginResponse;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
 import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
 import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
 import com.AlbertAbuav.Project003Coupons.exception.invalidCustomerException;
+import com.AlbertAbuav.Project003Coupons.exception.invalidImageException;
 import com.AlbertAbuav.Project003Coupons.login.ClientType;
 import com.AlbertAbuav.Project003Coupons.login.LoginManager;
 import com.AlbertAbuav.Project003Coupons.repositories.CompanyRepository;
@@ -18,20 +20,28 @@ import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.CompanyService;
 import com.AlbertAbuav.Project003Coupons.service.CustomerService;
+import com.AlbertAbuav.Project003Coupons.service.ImageService;
 import com.AlbertAbuav.Project003Coupons.serviceImpl.ClientFacade;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCompanies;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCoupons;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCustomers;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("company-service")  //==>  http://localhost:8080/company-service
@@ -41,6 +51,7 @@ public class CompanyController {
 
     private final CouponRepository couponRepository;
     private final TokenManager tokenManager;
+    private final ImageService imageService;
     private CompanyService companyService;
 
 
@@ -146,6 +157,19 @@ public class CompanyController {
         tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         return new ResponseEntity<>(new ListOfCustomers(companyService.getAllCompanyCustomersOfASingleCouponByCouponId(id)), HttpStatus.OK); //==> Return body + 200
+    }
+
+    @RequestMapping(value = "/images/{uuid}", method = RequestMethod.GET) //==>  http://localhost:8080/company-service/images/uuid
+    public ResponseEntity<?> getImage(@PathVariable UUID uuid, HttpServletResponse response) throws IOException, invalidImageException {
+        Image image = imageService.getImage(uuid);
+
+        response.setHeader("Content-Disposition", "inline;filename=\"" + image.getId().toString() + "\"");
+        OutputStream out = response.getOutputStream();
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        IOUtils.copy(new ByteArrayInputStream(image.getImage()), out);
+        out.close();
+
+        return null; //==> Return body + 200
     }
 
 }

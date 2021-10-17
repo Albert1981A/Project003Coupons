@@ -29,6 +29,11 @@ public class Company {
     private String email;
     private String password;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image image;
+
+    private String imageID;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Singular
     @ToString.Exclude
@@ -42,8 +47,8 @@ public class Company {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", coupons='" + PrintUtils.listToString(coupons) +
+                ", image=" + image.getId() +
+                ", coupons=" + PrintUtils.listToString(coupons) +
                 '}';
     }
-
 }

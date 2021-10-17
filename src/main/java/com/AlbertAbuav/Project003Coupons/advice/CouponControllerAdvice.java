@@ -1,8 +1,6 @@
 package com.AlbertAbuav.Project003Coupons.advice;
 
-import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
-import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
-import com.AlbertAbuav.Project003Coupons.exception.invalidCustomerException;
+import com.AlbertAbuav.Project003Coupons.exception.*;
 import com.AlbertAbuav.Project003Coupons.exception.SecurityException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +40,12 @@ public class CouponControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDetails customerHandleException(Exception e) {
         return new ErrorDetails("Customer exception: ", e.getMessage());
+    }
+
+    @ExceptionHandler(invalidImageException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDetails imageHandleException(Exception e) {
+        return new ErrorDetails("Image exception: ", e.getMessage());
     }
 
     @ExceptionHandler(HttpClientErrorException.class)

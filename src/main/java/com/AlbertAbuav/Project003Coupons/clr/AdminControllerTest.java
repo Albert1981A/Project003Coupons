@@ -4,6 +4,7 @@ import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
 import com.AlbertAbuav.Project003Coupons.controllers.LogController;
+import com.AlbertAbuav.Project003Coupons.controllers.model.CompanyResponse;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginResponse;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
@@ -11,6 +12,7 @@ import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
 import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.AdminService;
+import com.AlbertAbuav.Project003Coupons.service.CompanyService;
 import com.AlbertAbuav.Project003Coupons.utils.*;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCompanies;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCustomers;
@@ -24,12 +26,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 @Order(7)
 public class AdminControllerTest implements CommandLineRunner {
@@ -47,7 +50,7 @@ public class AdminControllerTest implements CommandLineRunner {
     private AdminService adminService;
 
     @Override
-    public void run(String... args) {
+    public void run(String... args) throws Exception{
 
         Colors.setGreenBoldPrint(ArtUtils.ADMIN_CONTROLLER);
 
@@ -70,11 +73,22 @@ public class AdminControllerTest implements CommandLineRunner {
         Coupon coupon1 = factoryUtils.createCouponOfACompany(11);
         Coupon coupon2 = factoryUtils.createCouponOfACompany(11);
         List<Coupon> coupons1 = new ArrayList<>(Arrays.asList(coupon1, coupon2));
-        Company company1 = factoryUtils.createCompany();
-        coupons1.forEach(coupon -> coupon.setImage(company1.getName() + ".jpg"));
-        company1.setCoupons(coupons1);
 
-        System.out.println("This is the company to add:");
+//        CompanyResponse companyResponse = factoryUtils.createCompanyResponse();
+        Company company1 = null;
+        try {
+            company1 = factoryUtils.createCompany();
+            System.out.println(company1.getImage().getId());
+            Company finalCompany1 = company1;
+            coupons1.forEach(coupon -> coupon.setImage(finalCompany1.getName() + ".jpg"));
+            company1.setCoupons(coupons1);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+
+        System.out.println("This is the companyResponse to add:");
+        System.out.println(company1);
         chartUtils.printCompany(company1);
 
         HttpEntity<Company> entity2 = new HttpEntity<>(company1, httpHeaders);

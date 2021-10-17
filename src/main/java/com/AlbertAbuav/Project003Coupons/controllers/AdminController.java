@@ -2,13 +2,13 @@ package com.AlbertAbuav.Project003Coupons.controllers;
 
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
+import com.AlbertAbuav.Project003Coupons.beans.Image;
+import com.AlbertAbuav.Project003Coupons.controllers.model.CompanyResponse;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginResponse;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
+import com.AlbertAbuav.Project003Coupons.exception.*;
 import com.AlbertAbuav.Project003Coupons.exception.SecurityException;
-import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
-import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
-import com.AlbertAbuav.Project003Coupons.exception.invalidCustomerException;
 import com.AlbertAbuav.Project003Coupons.login.ClientType;
 import com.AlbertAbuav.Project003Coupons.login.LoginManager;
 import com.AlbertAbuav.Project003Coupons.repositories.CompanyRepository;
@@ -18,6 +18,7 @@ import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.AdminService;
 import com.AlbertAbuav.Project003Coupons.service.CustomerService;
+import com.AlbertAbuav.Project003Coupons.service.ImageService;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCompanies;
 import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCustomers;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("admin-service")  //==>  http://localhost:8080/admin-service
@@ -34,6 +37,7 @@ public class AdminController {
 
     private AdminService adminService;
     private final TokenManager tokenManager;
+    private final ImageService imageService;
 
 //    @PostMapping("login") // ==>  http://localhost:8080/admin-service/login
 //    @Override
@@ -56,12 +60,46 @@ public class AdminController {
         return (AdminService) information.getClientFacade();
     }
 
+//    @ResponseStatus(code= HttpStatus.CREATED)
+//    @PostMapping("companies") // ==>  http://localhost:8080/admin-service/companies
+//    public ResponseEntity<?> addCompany(@RequestHeader(value = "Authorization") String token, @RequestBody Company company) throws invalidAdminException {
+//        tokenManager.updateToken(token); //update the token time to current time
+//        adminService = getAdminService(token);
+//        System.out.println(company);
+//        adminService.addCompany(company);
+//        Company added = adminService.getSingleCompany(company.getId());
+//        return new ResponseEntity<>(added, HttpStatus.CREATED);  //==> Return 201 (created)
+//    }
+
     @ResponseStatus(code= HttpStatus.CREATED)
     @PostMapping("companies") // ==>  http://localhost:8080/admin-service/companies
-    public ResponseEntity<?> addCompany(@RequestHeader(value = "Authorization") String token, @RequestBody Company company) throws invalidAdminException {
+    public ResponseEntity<?> addCompany(@RequestHeader(value = "Authorization") String token, @ModelAttribute CompanyResponse companyResponse) throws invalidAdminException {
+        System.out.println("Hi... Im here-1 !");
         tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
-        System.out.println(company);
+        System.out.println("Hi... Im here-2 !");
+        UUID uuid = null;
+        Image image = null;
+        try {
+            System.out.println("Hi... Im here-3 !");
+            System.out.println(companyResponse);
+            System.out.println(companyResponse.getImage().getBytes());
+            uuid = imageService.addImage(companyResponse.getImage().getBytes());
+
+            image = imageService.getImage(uuid);
+
+        } catch (invalidImageException | IOException e) {
+            System.out.println("Hi... Im here-4 !");
+            System.out.println(e.getMessage());
+        }
+        Company company = Company.builder()
+                .name(companyResponse.getName())
+                .email(companyResponse.getEmail())
+                .password(companyResponse.getPassword())
+                .imageID(uuid.toString())
+                .image(image)
+                .build();
+        System.out.println("Company to add: " + company);
         adminService.addCompany(company);
         Company added = adminService.getSingleCompany(company.getId());
         return new ResponseEntity<>(added, HttpStatus.CREATED);  //==> Return 201 (created)

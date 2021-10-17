@@ -16,6 +16,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,7 +105,6 @@ public class InitData01 implements CommandLineRunner {
         try {
             Company company1 = factoryUtils.createCompany();
             coupons1.forEach(coupon -> coupon.setImage(company1.getName() + ".jpg"));
-            System.out.println(coupons1);
             company1.setCoupons(coupons1);
             adminService.addCompany(company1);
             Company company2 = factoryUtils.createCompany();
@@ -129,10 +129,9 @@ public class InitData01 implements CommandLineRunner {
             adminService.addCompany(company9);
             Company company10 = factoryUtils.createCompany();
             adminService.addCompany(company10);
-        } catch (invalidAdminException e) {
+        } catch (invalidAdminException | IOException e) {
             System.out.println(e.getMessage());
         }
-
 
 
         try {

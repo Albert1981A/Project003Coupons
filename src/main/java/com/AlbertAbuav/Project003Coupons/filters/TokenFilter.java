@@ -28,8 +28,26 @@ public class TokenFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
+        if (url.contains("images")) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+        if (url.endsWith("get-coupons")) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
 
         String token = ((HttpServletRequest)servletRequest).getHeader("Authorization");
+
+        if (url.endsWith("logout")) {
+            try {
+                tokenManager.isExist(token);
+            } catch (SecurityException e) {
+                filterChain.doFilter(servletRequest, servletResponse);
+                return;
+            }
+        }
+
 
         try {
             tokenManager.isExist(token);

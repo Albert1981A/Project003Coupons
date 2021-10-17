@@ -13,6 +13,7 @@ import com.AlbertAbuav.Project003Coupons.utils.Colors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -62,6 +63,10 @@ public class AdminServiceImpl extends ClientFacade implements AdminService {
             throw new invalidAdminException("The email of the company you are trying to add already appears in the system.\nCompanies with the same email cannot be added!");
         }
         companyRepository.save(company);
+        if(company.getImage() != null) {
+            company.setImageID(company.getImage().getId().toString());
+        }
+        companyRepository.saveAndFlush(company);
     }
 
     /**
