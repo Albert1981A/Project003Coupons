@@ -1,6 +1,7 @@
 package com.AlbertAbuav.Project003Coupons.controllers.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @Data
 @Builder
-public class CompanyResponse {
+@JsonIgnoreProperties(value = {"image"})
+public class CompanyReceiveDetails {
 
     private String name;
     private String email;

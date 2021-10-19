@@ -48,7 +48,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CompanyController {
 
-
     private final CouponRepository couponRepository;
     private final TokenManager tokenManager;
     private final ImageService imageService;
@@ -169,7 +168,21 @@ public class CompanyController {
         IOUtils.copy(new ByteArrayInputStream(image.getImage()), out);
         out.close();
 
-        return null; //==> Return body + 200
+        return null;
+    }
+
+    @RequestMapping(value = "/images/company-id/{id}", method = RequestMethod.GET) //==>  http://localhost:8080/company-service/images/company-id/1
+    public ResponseEntity<?> getImageByCompanyId(@PathVariable int id, HttpServletResponse response) throws IOException, invalidImageException {
+
+        Image image = imageService.getImageByCompanyId(id);
+
+        response.setHeader("Content-Disposition", "inline;filename=\"" + image.getId().toString() + "\"");
+        OutputStream out = response.getOutputStream();
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        IOUtils.copy(new ByteArrayInputStream(image.getImage()), out);
+        out.close();
+
+        return null;
     }
 
 }

@@ -1,33 +1,45 @@
 package com.AlbertAbuav.Project003Coupons.utils;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
+//@Component
+@Data
+@RequiredArgsConstructor
 public class BASE64DecodedMultipartFile implements MultipartFile {
 
-    private final String name;
-    private final String originalFilename;
-    private final String contentType;
-    private final byte[] imgContent;
+    private final byte[] fileContent;
+    private String fileName;
+    private String contentType;
+    private File file;
+    private String destPath = "C:\\Users\\albrt\\IdeaProjects2\\Project003Coupons\\src\\main\\resources\\static\\";
+    private FileOutputStream fileOutputStream;
 
-    public BASE64DecodedMultipartFile(String name, String originalFilename, String contentType, byte[] imgContent) {
-        this.name = name;
-        this.originalFilename = originalFilename;
+    public BASE64DecodedMultipartFile(byte[] fileData, String name, String contentType) {
+        this.fileContent = fileData;
+        this.fileName = name;
         this.contentType = contentType;
-        this.imgContent = imgContent;
+        file = new File(destPath + fileName + "1." + contentType);
+
     }
 
     @Override
     public String getName() {
         // implementation depends on your requirements
-        return name;
+        return fileName;
     }
 
     @Override
     public String getOriginalFilename() {
         // implementation depends on your requirements
-        return originalFilename;
+        return fileName;
     }
 
     @Override
@@ -38,26 +50,36 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
 
     @Override
     public boolean isEmpty() {
-        return imgContent == null || imgContent.length == 0;
+        return fileContent == null || fileContent.length == 0;
     }
 
     @Override
     public long getSize() {
-        return imgContent.length;
+        return fileContent.length;
     }
 
     @Override
     public byte[] getBytes() throws IOException {
-        return imgContent;
+        return fileContent;
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return new ByteArrayInputStream(imgContent);
+        return new ByteArrayInputStream(fileContent);
     }
 
     @Override
     public void transferTo(File dest) throws IOException, IllegalStateException {
-        new FileOutputStream(dest).write(imgContent);
+        fileOutputStream = new FileOutputStream(dest);
+        fileOutputStream.write(fileContent);
     }
+
+    public void clearOutStreams() throws IOException {
+        if (null != fileOutputStream) {
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            file.deleteOnExit();
+        }
+    }
+
 }

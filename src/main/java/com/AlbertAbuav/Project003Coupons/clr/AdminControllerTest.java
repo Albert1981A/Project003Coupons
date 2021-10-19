@@ -3,8 +3,7 @@ package com.AlbertAbuav.Project003Coupons.clr;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
-import com.AlbertAbuav.Project003Coupons.controllers.LogController;
-import com.AlbertAbuav.Project003Coupons.controllers.model.CompanyResponse;
+import com.AlbertAbuav.Project003Coupons.controllers.model.CompanyReceiveDetails;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginDetails;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LoginResponse;
 import com.AlbertAbuav.Project003Coupons.controllers.model.LogoutDetails;
@@ -12,10 +11,7 @@ import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
 import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.AdminService;
-import com.AlbertAbuav.Project003Coupons.service.CompanyService;
 import com.AlbertAbuav.Project003Coupons.utils.*;
-import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCompanies;
-import com.AlbertAbuav.Project003Coupons.wrappers.ListOfCustomers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -32,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 @Order(7)
 public class AdminControllerTest implements CommandLineRunner {
@@ -70,44 +66,30 @@ public class AdminControllerTest implements CommandLineRunner {
 
         TestUtils.testAdminInfo("Add Company");
 
-        Coupon coupon1 = factoryUtils.createCouponOfACompany(11);
-        Coupon coupon2 = factoryUtils.createCouponOfACompany(11);
-        List<Coupon> coupons1 = new ArrayList<>(Arrays.asList(coupon1, coupon2));
-
-//        CompanyResponse companyResponse = factoryUtils.createCompanyResponse();
-        Company company1 = null;
-        try {
-            company1 = factoryUtils.createCompany();
-            System.out.println(company1.getImage().getId());
-            Company finalCompany1 = company1;
-            coupons1.forEach(coupon -> coupon.setImage(finalCompany1.getName() + ".jpg"));
-            company1.setCoupons(coupons1);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
-
-        System.out.println("This is the companyResponse to add:");
-        System.out.println(company1);
-        chartUtils.printCompany(company1);
-
-        HttpEntity<Company> entity2 = new HttpEntity<>(company1, httpHeaders);
-        System.out.println(entity2);
-        ResponseEntity<String> addCompany = restTemplate.exchange(B_URL + "/companies", HttpMethod.POST, entity2, String.class);
-        System.out.println(addCompany.getStatusCodeValue());
-
-        System.out.println("The company after adding it to the DB:");
-        try {
-            chartUtils.printCompany(adminService.getSingleCompany(11));
-        } catch (invalidAdminException e) {
-            System.out.println(e.getMessage());
-        }
+//        Coupon coupon1 = factoryUtils.createCouponOfACompany(11);
+//        Coupon coupon2 = factoryUtils.createCouponOfACompany(11);
+//        List<Coupon> coupons1 = new ArrayList<>(Arrays.asList(coupon1, coupon2));
+//
+//        CompanyReceiveDetails companyReceiveDetails = factoryUtils.createCompanyReceiveDetails();
+//
+//        HttpEntity<CompanyReceiveDetails> entity2 = new HttpEntity<>(companyReceiveDetails, httpHeaders);
+//        System.out.println("Hi.. im here!");
+//        ResponseEntity<Company> addCompany = restTemplate.exchange(B_URL + "/companies", HttpMethod.POST, entity2, Company.class);
+//        System.out.println(addCompany.getStatusCodeValue());
+//        System.out.println(addCompany.getBody());
+//
+//        System.out.println("The company after adding it to the DB:");
+//        try {
+//            chartUtils.printCompany(adminService.getSingleCompany(11));
+//        } catch (invalidAdminException e) {
+//            System.out.println(e.getMessage());
+//        }
 
         TestUtils.testAdminInfo("Update Company");
 
         Company companyToUpdate = null;
         try {
-            companyToUpdate = adminService.getSingleCompany(11);
+            companyToUpdate = adminService.getSingleCompany(10);
         } catch (invalidAdminException e) {
             System.out.println(e.getMessage());
         }
@@ -125,7 +107,7 @@ public class AdminControllerTest implements CommandLineRunner {
         System.out.println("The company after updating it in the DB:");
         Company updated = null;
         try {
-            updated = adminService.getSingleCompany(11);
+            updated = adminService.getSingleCompany(10);
             chartUtils.printCompany(updated);
         } catch (invalidAdminException e) {
             System.out.println(e.getMessage());
@@ -133,7 +115,7 @@ public class AdminControllerTest implements CommandLineRunner {
 
         TestUtils.testAdminInfo("Delete Company");
 
-        ResponseEntity<String> deleteCompany = restTemplate.exchange(B_URL + "/companies/11", HttpMethod.DELETE, entity, String.class);
+        ResponseEntity<String> deleteCompany = restTemplate.exchange(B_URL + "/companies/10", HttpMethod.DELETE, entity, String.class);
         System.out.println(deleteCompany.getStatusCodeValue());
 
         TestUtils.testAdminInfo("Get all Companies");

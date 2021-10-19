@@ -49,9 +49,9 @@ public class DefaultObjects implements CommandLineRunner {
 
         TestUtils.testAdminInfo("Adding Default Company");
 
-        Coupon coupon1 = factoryUtils.createCouponOfACompany(12);
-        Coupon coupon2 = factoryUtils.createCouponOfACompany(12);
-        Coupon coupon3 = factoryUtils.createCouponOfACompany(12);
+        Coupon coupon1 = factoryUtils.createCouponOfACompany(11);
+        Coupon coupon2 = factoryUtils.createCouponOfACompany(11);
+        Coupon coupon3 = factoryUtils.createCouponOfACompany(11);
 
         try {
             Company company = factoryUtils.createCompany();
@@ -68,10 +68,15 @@ public class DefaultObjects implements CommandLineRunner {
             System.out.println("This is the company to add: ");
             chartUtils.printCompany(company);
 
+
             adminService.addCompany(company);
+            System.out.println("Company after adding: ");
+            chartUtils.printCompanies(adminService.getAllCompanies());
         } catch (IOException | invalidAdminException e) {
             System.out.println(e.getMessage());
         }
+
+
 
         TestUtils.testCompanyInfo("Login to Company number - 2");
 

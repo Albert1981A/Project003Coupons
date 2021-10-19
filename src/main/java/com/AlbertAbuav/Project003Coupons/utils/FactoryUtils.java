@@ -1,9 +1,14 @@
 package com.AlbertAbuav.Project003Coupons.utils;
 
 import com.AlbertAbuav.Project003Coupons.beans.*;
-import com.AlbertAbuav.Project003Coupons.controllers.model.CompanyResponse;
+import com.AlbertAbuav.Project003Coupons.controllers.model.CompanyReceiveDetails;
+import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
+import com.AlbertAbuav.Project003Coupons.exception.invalidImageException;
 import com.AlbertAbuav.Project003Coupons.repositories.CompanyRepository;
+import com.AlbertAbuav.Project003Coupons.service.AdminService;
+import com.AlbertAbuav.Project003Coupons.service.ImageService;
 import com.AlbertAbuav.Project003Coupons.serviceImpl.IOService;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +25,12 @@ public class FactoryUtils {
     private static int COUNT1 = 1;
     private static int COUNT2 = 1;
 
-//    @Autowired
     private final CompanyRepository companyRepository;
+
     private BASE64DecodedMultipartFile multipartFile;
     private final IOService ioService;
+    private final AdminService adminService;
+    private final ImageService imageService;
 
     /**
      * This method generate a random customer first name.
@@ -103,20 +110,39 @@ public class FactoryUtils {
         return email.toLowerCase(Locale.ROOT);
     }
 
-    public CompanyResponse createCompanyResponse() throws IOException {
+    public CompanyReceiveDetails createCompanyReceiveDetails() throws IOException {
         String name = generateCompanyName();
         String email = createCompanyEmail(name);
-        byte[] bytes = ioService.fromFile(name);
-        Image image = new Image(bytes);
-        multipartFile = new BASE64DecodedMultipartFile(name, name, "jpg", image.getImage());
-        MultipartFile multipartFile1 = multipartFile;
-        return CompanyResponse.builder()
-                .name(name)
-                .email(email)
-                .password(createPassword())
-                .imageID(image.getId().toString())
-                .image(multipartFile1)
-                .build();
+        Image image = new Image(ioService.fromFile(name));
+        UUID uuid = null;
+        try {
+            uuid = imageService.addImage(image.getImage());
+        } catch (invalidImageException e) {
+            System.out.println(e.getMessage());
+        }
+//        Company company = createCompany();
+//        try {
+//            adminService.addCompany(company);
+//        } catch (invalidAdminException e) {
+//            System.out.println(e.getMessage());
+//        }
+        multipartFile = new BASE64DecodedMultipartFile(image.getImage(), name, "jpg");
+        CompanyReceiveDetails companyReceiveDetails = null;
+        try {
+            multipartFile.transferTo(multipartFile.getFile());
+            companyReceiveDetails = CompanyReceiveDetails.builder()
+                    .name(name)
+                    .email(email)
+                    .password(createPassword())
+                    .imageID(uuid.toString())
+                    .image(multipartFile)
+                    .build();
+        } catch (IllegalStateException e) {
+            System.out.println("IllegalStateException : " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IOException : " + e.getMessage());
+        }
+        return companyReceiveDetails;
     }
 
     public Company createCompany() throws IOException {
