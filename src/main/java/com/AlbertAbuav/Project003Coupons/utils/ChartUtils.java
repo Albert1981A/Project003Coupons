@@ -26,9 +26,9 @@ public class ChartUtils {
     private final String COMPANY_HEADER = String.format("%s %3s %s %15s %s %30s %s %15s %s %50s %s", "||", "Id", "|", centerString("Name", 15), "|", centerString("Email", 30), "|" , centerString("Password", 15), "|" , centerString("Image", 50) , "||");
     private final String COMPANY_THIN_SEPARATION_LINE = String.format("%s", "-----------------------------------------------------------------------------------------------------------------------------------");
     private final String COMPANY_THICK_SEPARATION_LINE = String.format("%s", "===================================================================================================================================");
-    private final String CUSTOMER_HEADER = String.format("%s %3s %s %20s %s %20s %s %30s %s %15s %s", "||", "Id", "|", centerString("First name", 20), "|", centerString("Last name", 20), "|", centerString("Email", 30), "|" , centerString("Password", 15), "||");
-    private final String CUSTOMER_THIN_SEPARATION_LINE = String.format("%s", "----------------------------------------------------------------------------------------------------------");
-    private final String CUSTOMER_THICK_SEPARATION_LINE = String.format("%s", "==========================================================================================================");
+    private final String CUSTOMER_HEADER = String.format("%s %3s %s %20s %s %20s %s %30s %s %15s %s %50s %s", "||", "Id", "|", centerString("First name", 20), "|", centerString("Last name", 20), "|", centerString("Email", 30), "|" , centerString("Password", 15), "|" , centerString("Image", 50) , "||");
+    private final String CUSTOMER_THIN_SEPARATION_LINE = String.format("%s", "---------------------------------------------------------------------------------------------------------------------------------------------------------------");
+    private final String CUSTOMER_THICK_SEPARATION_LINE = String.format("%s", "===============================================================================================================================================================");
     private final String COUPON_HEADER = String.format("%s %3s %s %12s %s %40s %s %20s %s %20s %s %15s %s %15s %s %10s %s %10s %s %15s %s", "||", "Id", "|", centerString("Company Id", 12), "|", centerString("Category", 40), "|", centerString("Title", 20), "|", centerString("Description", 20), "|", centerString("Start Date", 15), "|", centerString("End Date", 15), "|", centerString("Amount", 10), "|", centerString("Price", 10), "|", centerString("Image", 25), "||");
     private final String COUPON_THIN_SEPARATION_LINE = String.format("%s", "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
     private final String COUPON_THICK_SEPARATION_LINE = String.format("%s", "===========================================================================================================================================================================================================");
@@ -95,9 +95,15 @@ public class ChartUtils {
     }
 
     public void printCustomerDetails(Customer cu) {
+        String imageDetails;
+        if (cu.getImage().getId() == null) {
+            imageDetails = "null";
+        } else {
+            imageDetails = cu.getImage().getId().toString();
+        }
         String CUSTOMER_VERTICAL = Colors.PURPLE_BOLD + "|" + Colors.RESET;
         String CUSTOMER_TWO_VERTICAL = Colors.PURPLE_BOLD + "||" + Colors.RESET;
-        System.out.printf("%s %3d %s %20s %s %20s %s %30s %s %15s %s%n", CUSTOMER_TWO_VERTICAL, cu.getId(), CUSTOMER_VERTICAL, centerString(cu.getFirstName(),20), CUSTOMER_VERTICAL, centerString(cu.getLastName(), 20), CUSTOMER_VERTICAL, centerString(cu.getEmail(), 30), CUSTOMER_VERTICAL, centerString(cu.getPassword(), 15), CUSTOMER_TWO_VERTICAL);
+        System.out.printf("%s %3d %s %20s %s %20s %s %30s %s %15s %s %50s %s%n", CUSTOMER_TWO_VERTICAL, cu.getId(), CUSTOMER_VERTICAL, centerString(cu.getFirstName(),20), CUSTOMER_VERTICAL, centerString(cu.getLastName(), 20), CUSTOMER_VERTICAL, centerString(cu.getEmail(), 30), CUSTOMER_VERTICAL, centerString(cu.getPassword(), 15), CUSTOMER_VERTICAL, centerString(imageDetails, 50), CUSTOMER_TWO_VERTICAL);
         Colors.setPurpleBoldPrint(CUSTOMER_THIN_SEPARATION_LINE);
         //System.out.printf("%10s %105s %s%n", Colors.PURPLE_BOLD + "|| Coupons:" + Colors.RESET, Colors.PURPLE_BOLD + "||" + Colors.RESET, PrintUtils.listToString(cu.getCoupons()));
         printCoupons(cu.getCoupons());

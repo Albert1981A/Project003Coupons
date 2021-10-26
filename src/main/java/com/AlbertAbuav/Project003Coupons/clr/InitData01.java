@@ -3,6 +3,7 @@ package com.AlbertAbuav.Project003Coupons.clr;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
+import com.AlbertAbuav.Project003Coupons.beans.Image;
 import com.AlbertAbuav.Project003Coupons.exception.invalidAdminException;
 import com.AlbertAbuav.Project003Coupons.exception.invalidCompanyException;
 import com.AlbertAbuav.Project003Coupons.exception.invalidCustomerException;
@@ -142,17 +143,30 @@ public class InitData01 implements CommandLineRunner {
 
         TestUtils.testAdminInfo("Adding Customers");
 
-        Customer customer1 = factoryUtils.createCustomer();
-        Customer customer2 = factoryUtils.createCustomer();
-        Customer customer3 = factoryUtils.createCustomer();
-        Customer customer4 = factoryUtils.createCustomer();
-        Customer customer5 = factoryUtils.createCustomer();
-        Customer customer6 = factoryUtils.createCustomer();
-        Customer customer7 = factoryUtils.createCustomer();
-        Customer customer8 = factoryUtils.createCustomer();
-        Customer customer9 = factoryUtils.createCustomer();
-        Customer customer10 = factoryUtils.createCustomer();
-
+        Customer customer1 = null;
+        Customer customer2 = null;
+        Customer customer3 = null;
+        Customer customer4 = null;
+        Customer customer5 = null;
+        Customer customer6 = null;
+        Customer customer7 = null;
+        Customer customer8 = null;
+        Customer customer9 = null;
+        Customer customer10 = null;
+        try {
+            customer1 = factoryUtils.createCustomer();
+            customer2 = factoryUtils.createCustomer();
+            customer3 = factoryUtils.createCustomer();
+            customer4 = factoryUtils.createCustomer();
+            customer5 = factoryUtils.createCustomer();
+            customer6 = factoryUtils.createCustomer();
+            customer7 = factoryUtils.createCustomer();
+            customer8 = factoryUtils.createCustomer();
+            customer9 = factoryUtils.createCustomer();
+            customer10 = factoryUtils.createCustomer();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
         List<Coupon> customerCoupons1 = new ArrayList<>(Arrays.asList(coupon2, coupon3, coupon4, coupon8));
         List<Coupon> customerCoupons2 = new ArrayList<>(Arrays.asList(coupon3, coupon4, coupon5, coupon9));

@@ -1,11 +1,7 @@
 package com.AlbertAbuav.Project003Coupons.task;
 
-import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
-import com.AlbertAbuav.Project003Coupons.beans.Customer;
-import com.AlbertAbuav.Project003Coupons.repositories.CompanyRepository;
 import com.AlbertAbuav.Project003Coupons.repositories.CouponRepository;
-import com.AlbertAbuav.Project003Coupons.repositories.CustomerRepository;
 import com.AlbertAbuav.Project003Coupons.utils.ChartUtils;
 import com.AlbertAbuav.Project003Coupons.utils.Colors;
 import com.AlbertAbuav.Project003Coupons.utils.CouponComponentsUtils;
@@ -22,8 +18,6 @@ import java.util.List;
 public class DailyExpiredCoupons {
 
     private final CouponRepository couponRepository;
-    private final CustomerRepository customerRepository;
-    private final CompanyRepository companyRepository;
     private final ChartUtils chartUtils;
     private final CouponComponentsUtils couponComponentsUtils;
 

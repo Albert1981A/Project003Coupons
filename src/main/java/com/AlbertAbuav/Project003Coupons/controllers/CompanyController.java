@@ -1,5 +1,6 @@
 package com.AlbertAbuav.Project003Coupons.controllers;
 
+import com.AlbertAbuav.Project003Coupons.aop.MyUpdateToken;
 import com.AlbertAbuav.Project003Coupons.beans.Category;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Coupon;
@@ -75,26 +76,25 @@ public class CompanyController {
         return (CompanyService) information.getClientFacade();
     }
 
+    @MyUpdateToken //update the token time to current time
     @ResponseStatus(code= HttpStatus.CREATED)
     @PostMapping("coupons") // ==>  http://localhost:8080/company-service/coupons
     public ResponseEntity<?> addCoupon(@RequestHeader(value = "Authorization") String token, @RequestBody Coupon coupon) throws invalidCompanyException {
-        tokenManager.updateToken(token); //update the token time to current time
+//        tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
-        // System.out.println(companyService.getTheLoggedCompanyDetails());
-//        System.out.println(coupon);
         companyService.addCoupon(coupon);
         Coupon couponAdded = couponRepository.findByCompanyIDAndTitle(coupon.getCompanyID(), coupon.getTitle());
         return new ResponseEntity<>(couponAdded, HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
+    @MyUpdateToken //update the token time to current time
     @ResponseStatus(code= HttpStatus.CREATED)
     @PutMapping("coupons") // ==>  http://localhost:8080/company-service/coupons
     public ResponseEntity<?> updateCoupon(@RequestHeader(value = "Authorization") String token, @RequestBody Coupon coupon) throws invalidCompanyException {
-        tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         companyService.updateCoupon(coupon);
-        Coupon couponAdded = couponRepository.getOne(coupon.getId());
-        return new ResponseEntity<>(couponAdded, HttpStatus.CREATED);  //==> Return 201 (created)
+        Coupon couponUpdated = couponRepository.getOne(coupon.getId());
+        return new ResponseEntity<>(couponUpdated, HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
 //    @PutMapping("coupons") // ==>  http://localhost:8080/company-service/coupons
@@ -107,53 +107,53 @@ public class CompanyController {
 //        return new ResponseEntity<>(updated, HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
 //    }
 
+    @MyUpdateToken //update the token time to current time
     @DeleteMapping("coupons/{id}")  // ==>  http://localhost:8080/company-service/coupons/1  (id=1)
     public ResponseEntity<?> deleteCoupon(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidCompanyException {
-        tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         Coupon couponToDelete = companyService.getSingleCoupon(id);
         companyService.deleteCoupon(couponToDelete);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("coupons")  //==>  http://localhost:8080/company-service/coupons
     public ResponseEntity<?> getAllCompanyCoupons(@RequestHeader(value = "Authorization") String token) {
-        tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         return new ResponseEntity<>(companyService.getAllCompanyCoupons(), HttpStatus.OK); //==> Return body + 200
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("coupons/category")  //==>  http://localhost:8080/company-service/coupons/category/?category=1  (category=1)
     public ResponseEntity<?> getAllCompanyCouponsOfSpecificCategory(@RequestHeader(value = "Authorization") String token, @RequestParam(value = "category") Category category) throws invalidCompanyException {
-        tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         return new ResponseEntity<>(companyService.getAllCompanyCouponsOfSpecificCategory(category), HttpStatus.OK); //==> Return body + 200
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("coupons/max-price")  //==>  http://localhost:8080/company-service/coupons/max-price/?max-price=80.2  (max-price=80.2)
     public ResponseEntity<?> getAllCompanyCouponsUpToMaxPrice(@RequestHeader(value = "Authorization") String token, @RequestParam(value = "max-price") double maxPrice) throws invalidCompanyException, HttpClientErrorException, IllegalStateException {
-        tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         return new ResponseEntity<>(companyService.getAllCompanyCouponsUpToMaxPrice(maxPrice), HttpStatus.OK); //==> Return body + 200
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("company-details")  //==>  http://localhost:8080/company-service/company-details
     public ResponseEntity<?> getTheLoggedCompanyDetails(@RequestHeader(value = "Authorization") String token) {
-        tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         return new ResponseEntity<>(companyService.getTheLoggedCompanyDetails(), HttpStatus.OK); //==> Return body + 200
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("coupons/{id}")  //==>  http://localhost:8080/company-service/coupons/1  (id=1)
     public ResponseEntity<?> getSingleCoupon(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidCompanyException {
-        tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         return new ResponseEntity<>(companyService.getSingleCoupon(id), HttpStatus.OK); //==> Return body + 200
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("company-customers-by-coupon-id/{id}")  //==>  http://localhost:8080/company-service/company-customers-by-coupon-id/1 (id=1)
     public ResponseEntity<?> getAllCompanyCustomersOfASingleCouponByCouponId(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidCompanyException {
-        tokenManager.updateToken(token); //update the token time to current time
         companyService = getCompanyService(token);
         return new ResponseEntity<>(new ListOfCustomers(companyService.getAllCompanyCustomersOfASingleCouponByCouponId(id)), HttpStatus.OK); //==> Return body + 200
     }

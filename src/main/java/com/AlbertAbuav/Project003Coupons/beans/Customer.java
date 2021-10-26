@@ -30,6 +30,11 @@ public class Customer {
     private String email;
     private String password;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image image;
+
+    private String imageID;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Singular
     @ToString.Exclude

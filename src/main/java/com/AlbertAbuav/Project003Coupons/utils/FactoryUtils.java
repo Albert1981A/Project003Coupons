@@ -94,14 +94,18 @@ public class FactoryUtils {
     }
 
 
-    public Customer createCustomer() {
+    public Customer createCustomer() throws IOException {
         String firstName = generateFirstName();
+        String lastName = generateLastName();
         String email = createEmail(firstName);
+        String password = createPassword();
+        Image image = new Image(ioService.fromFile(lastName));
         return Customer.builder()
                 .firstName(firstName)
-                .lastName(generateLastName())
+                .lastName(lastName)
                 .email(email)
-                .password(createPassword())
+                .password(password)
+                .image(image)
                 .build();
     }
 

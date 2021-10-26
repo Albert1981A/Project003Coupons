@@ -134,22 +134,31 @@ public class AdminControllerTest implements CommandLineRunner {
 
         TestUtils.testAdminInfo("Add Customer");
 
-        Customer customer1 = factoryUtils.createCustomer();
+//        Customer customer1 = factoryUtils.createCustomer();
+//
+//        HttpEntity<Customer> entity4 = new HttpEntity<>(customer1, httpHeaders);
+//        ResponseEntity<String> addCustomer = restTemplate.exchange(B_URL + "/customers", HttpMethod.POST, entity4, String.class);
+//        System.out.println(addCustomer.getStatusCodeValue());
+//
+//        Customer addedCustomer = null;
+//        try {
+//            addedCustomer = adminService.getSingleCustomer(11);
+//            System.out.println("This is the added Customer;");
+//            chartUtils.printCustomer(addedCustomer);
+//        } catch (invalidAdminException e) {
+//            System.out.println(e.getMessage());
+//        }
 
-        HttpEntity<Customer> entity4 = new HttpEntity<>(customer1, httpHeaders);
-        ResponseEntity<String> addCustomer = restTemplate.exchange(B_URL + "/customers", HttpMethod.POST, entity4, String.class);
-        System.out.println(addCustomer.getStatusCodeValue());
+        TestUtils.testAdminInfo("Update Customer");
 
         Customer addedCustomer = null;
         try {
-            addedCustomer = adminService.getSingleCustomer(11);
+            addedCustomer = adminService.getSingleCustomer(9);
             System.out.println("This is the added Customer;");
             chartUtils.printCustomer(addedCustomer);
         } catch (invalidAdminException e) {
             System.out.println(e.getMessage());
         }
-
-        TestUtils.testAdminInfo("Update Customer");
 
         Coupon coupon3 = factoryUtils.createCouponOfACompany(8);
         Coupon coupon4 = factoryUtils.createCouponOfACompany(8);
@@ -182,14 +191,14 @@ public class AdminControllerTest implements CommandLineRunner {
 
         System.out.println("This is the customer after the update");
         try {
-            chartUtils.printCustomer(adminService.getSingleCustomer(11));
+            chartUtils.printCustomer(adminService.getSingleCustomer(9));
         } catch (invalidAdminException e) {
             System.out.println(e.getMessage());
         }
 
         TestUtils.testAdminInfo("Delete Customer");
 
-        ResponseEntity<String> deleteCustomer = restTemplate.exchange(B_URL + "/customers/11", HttpMethod.DELETE, entity, String.class);
+        ResponseEntity<String> deleteCustomer = restTemplate.exchange(B_URL + "/customers/9", HttpMethod.DELETE, entity, String.class);
         System.out.println(deleteCustomer.getStatusCodeValue());
 
         TestUtils.testAdminInfo("Get all Customers");

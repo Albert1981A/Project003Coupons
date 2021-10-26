@@ -106,11 +106,16 @@ public class DefaultObjects implements CommandLineRunner {
 
         Coupon coupon4 = loggedCompany.getCoupons().get(1);
 
-        Customer customer = factoryUtils.createCustomer();
-        customer.setFirstName("Customer-First");
-        customer.setLastName("Customer-Last");
-        customer.setEmail("customer@customer.com");
-        customer.setPassword("customer");
+        Customer customer = null;
+        try {
+            customer = factoryUtils.createCustomer();
+            customer.setFirstName("Customer-First");
+            customer.setLastName("Customer-Last");
+            customer.setEmail("customer@customer.com");
+            customer.setPassword("customer");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
         List<Coupon> customerCoupons = new ArrayList<>(Arrays.asList(coupon2, coupon3, coupon4));
 

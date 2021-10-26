@@ -13,6 +13,7 @@ public class RemoveExpiredToken {
 
     @Scheduled(fixedRate = 1000*60*10)
     public void deleteEvery10Minutes() {
+        System.out.println("Delete expired tokens in action!");
         tokenManager.removeExpired();
     }
 }

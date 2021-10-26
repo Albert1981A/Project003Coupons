@@ -167,6 +167,10 @@ public class AdminServiceImpl extends ClientFacade implements AdminService {
             throw new invalidAdminException("The email of the customer you are trying to add already appears in the system.\nCustomers with the same email cannot be added.");
         }
         customerRepository.save(customer);
+        if(customer.getImage() != null) {
+            customer.setImageID(customer.getImage().getId().toString());
+        }
+        customerRepository.saveAndFlush(customer);
     }
 
     /**

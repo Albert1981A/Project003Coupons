@@ -196,15 +196,24 @@ public class AdminServiceTest implements CommandLineRunner {
 
         Customer customerToAdd1 = null;
         try {
-            customerToAdd1 = Customer.builder()
-                    .firstName("Sample")
-                    .lastName("Sample")
-                    .email(adminService.getSingleCustomer(4).getEmail())
-                    .password("1234")
-                    .build();
-        } catch (invalidAdminException e) {
+            customerToAdd1 = factoryUtils.createCustomer();
+            customerToAdd1.setLastName("Sample");
+            customerToAdd1.setLastName("Sample");
+            customerToAdd1.setEmail(adminService.getSingleCustomer(4).getEmail());
+            customerToAdd1.setPassword("1234");
+        } catch (IOException | invalidAdminException e) {
             System.out.println(e.getMessage());
         }
+//        try {
+//            customerToAdd1 = Customer.builder()
+//                    .firstName("Sample")
+//                    .lastName("Sample")
+//                    .email(adminService.getSingleCustomer(4).getEmail())
+//                    .password("1234")
+//                    .build();
+//        } catch (invalidAdminException e) {
+//            System.out.println(e.getMessage());
+//        }
         System.out.println("This is the customer to add:");
         chartUtils.printCustomer(customerToAdd1);
         System.out.println("Attempting to add the Customer:");

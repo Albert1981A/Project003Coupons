@@ -1,9 +1,11 @@
 package com.AlbertAbuav.Project003Coupons.controllers;
 
+import com.AlbertAbuav.Project003Coupons.aop.MyUpdateToken;
 import com.AlbertAbuav.Project003Coupons.beans.Company;
 import com.AlbertAbuav.Project003Coupons.beans.Customer;
 import com.AlbertAbuav.Project003Coupons.beans.Image;
 import com.AlbertAbuav.Project003Coupons.controllers.model.CompanyReceiveDetails;
+import com.AlbertAbuav.Project003Coupons.controllers.model.CustomerReceiveDetails;
 import com.AlbertAbuav.Project003Coupons.exception.*;
 import com.AlbertAbuav.Project003Coupons.security.Information;
 import com.AlbertAbuav.Project003Coupons.security.TokenManager;
@@ -47,7 +49,7 @@ public class AdminController {
         return (AdminService) information.getClientFacade();
     }
 
-//    @ResponseStatus(code= HttpStatus.CREATED)
+    //    @ResponseStatus(code= HttpStatus.CREATED)
 //    @PostMapping("companies") // ==>  http://localhost:8080/admin-service/companies
 //    public ResponseEntity<?> addCompany(@RequestHeader(value = "Authorization") String token, @RequestBody Company company) throws invalidAdminException {
 //        tokenManager.updateToken(token); //update the token time to current time
@@ -58,94 +60,93 @@ public class AdminController {
 //        return new ResponseEntity<>(added, HttpStatus.CREATED);  //==> Return 201 (created)
 //    }
 
-    @ResponseStatus(code= HttpStatus.CREATED)
+    @MyUpdateToken //update the token time to current time
+    @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping("companies") // ==>  http://localhost:8080/admin-service/companies
-    public ResponseEntity<?> addCompany(@RequestHeader(value = "Authorization") String token, @ModelAttribute CompanyReceiveDetails companyReceiveDetails) throws invalidAdminException, invalidImageException {
-        tokenManager.updateToken(token); //update the token time to current time
+    public ResponseEntity<?> addCompany(@RequestHeader(value = "Authorization") String token, @ModelAttribute CompanyReceiveDetails companyReceiveDetails) throws invalidAdminException {
+//        tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
-        System.out.println(" =>  In: Add Company1 ! ");
         Company company = imageService.getCompanyFromCompanyReceiveDetails(companyReceiveDetails);
-        System.out.println(" =>  In: Add Company2 !");
         System.out.println("Company to add: " + company);
         adminService.addCompany(company);
         Company added = adminService.getSingleCompany(company.getId());
         return new ResponseEntity<>(added, HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
-    @ResponseStatus(code= HttpStatus.CREATED)
+    @MyUpdateToken //update the token time to current time
+    @ResponseStatus(code = HttpStatus.CREATED)
     @PutMapping("companies") // ==>  http://localhost:8080/admin-service/companies
     public ResponseEntity<?> updateCompany(@RequestHeader(value = "Authorization") String token, @RequestBody Company company) throws invalidAdminException {
-        tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         adminService.updateCompany(company);
         Company updated = adminService.getSingleCompany(company.getId());
         return new ResponseEntity<>(updated, HttpStatus.CREATED); //==> Return 201 (created)
     }
 
+    @MyUpdateToken //update the token time to current time
     @DeleteMapping("companies/{id}")  // ==>  http://localhost:8080/admin-service/companies/1  (id=1)
     public ResponseEntity<?> deleteCompany(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidAdminException {
-        tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         Company companyToDelete = adminService.getSingleCompany(id);
         adminService.deleteCompany(companyToDelete);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("companies")  //==>  http://localhost:8080/admin-service/companies
     public ResponseEntity<?> getAllCompanies(@RequestHeader(value = "Authorization") String token) throws invalidAdminException {
-        tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
-        //return new ResponseEntity<List<Company>>(adminService.getAllCompanies(), HttpStatus.OK); //==> Return body + 200
         return new ResponseEntity<>(adminService.getAllCompanies(), HttpStatus.OK); //==> Return body + 200
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("companies/{id}")  // ==>  http://localhost:8080/admin-service/companies/1  (id=1)
     public ResponseEntity<?> getSingleCompany(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidAdminException {
-        tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         return new ResponseEntity<>(adminService.getSingleCompany(id), HttpStatus.OK); //==> Return body + 200
     }
 
-    @ResponseStatus(code= HttpStatus.CREATED)
+    @MyUpdateToken //update the token time to current time
+    @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping("customers") // ==>  http://localhost:8080/admin-service/customers
-    public ResponseEntity<?> addCustomer(@RequestHeader(value = "Authorization") String token, @RequestBody Customer customer) throws invalidAdminException {
-        tokenManager.updateToken(token); //update the token time to current time
+    public ResponseEntity<?> addCustomer(@RequestHeader(value = "Authorization") String token, @ModelAttribute CustomerReceiveDetails customerReceiveDetails) throws invalidAdminException {
         adminService = getAdminService(token);
+        Customer customer = imageService.getCustomerFromCustomerReceiveDetails(customerReceiveDetails);
+        System.out.println("Customer to add: " + customer);
         adminService.addCustomer(customer);
         Customer added = adminService.getSingleCustomer(customer.getId());
         return new ResponseEntity<>(added, HttpStatus.CREATED);  //==> Return 201 (created)
     }
 
-    @ResponseStatus(code= HttpStatus.CREATED)
+    @MyUpdateToken //update the token time to current time
+    @ResponseStatus(code = HttpStatus.CREATED)
     @PutMapping("customers") // ==>  http://localhost:8080/admin-service/customers
     public ResponseEntity<?> updateCustomer(@RequestHeader(value = "Authorization") String token, @RequestBody Customer customer) throws invalidAdminException {
-        tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         adminService.updateCustomer(customer);
         Customer updated = adminService.getSingleCustomer(customer.getId());
         return new ResponseEntity<>(updated, HttpStatus.CREATED); //==> Return 201 (created)
     }
 
+    @MyUpdateToken //update the token time to current time
     @DeleteMapping("customers/{id}")  // ==>  http://localhost:8080/admin-service/customers/1  (id=1)
     public ResponseEntity<?> deleteCustomer(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidAdminException {
-        tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         Customer customerToDelete = adminService.getSingleCustomer(id);
         adminService.deleteCustomer(customerToDelete);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); //==> Return 204 (ok and no content)
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("customers")  //==>  http://localhost:8080/admin-service/customers
     public ResponseEntity<?> getAllCustomers(@RequestHeader(value = "Authorization") String token) throws invalidAdminException {
-        tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
-        //return new ResponseEntity<>(new ListOfCustomers(adminService.getAllCustomers()), HttpStatus.OK); //==> Return body + 200
         return new ResponseEntity<>(adminService.getAllCustomers(), HttpStatus.OK); //==> Return body + 200
     }
 
+    @MyUpdateToken //update the token time to current time
     @GetMapping("customers/{id}")  // ==>  http://localhost:8080/admin-service/customers/1  (id=1)
     public ResponseEntity<?> getSingleCustomer(@RequestHeader(value = "Authorization") String token, @PathVariable int id) throws invalidAdminException {
-        tokenManager.updateToken(token); //update the token time to current time
         adminService = getAdminService(token);
         return new ResponseEntity<>(adminService.getSingleCustomer(id), HttpStatus.OK); //==> Return body + 200
     }
