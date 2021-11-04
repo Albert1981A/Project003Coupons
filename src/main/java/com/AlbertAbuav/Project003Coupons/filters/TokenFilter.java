@@ -24,6 +24,7 @@ public class TokenFilter implements Filter {
         System.out.println("Filter in action!");
 
         String url = ((HttpServletRequest)servletRequest).getRequestURI();
+
         if (url.endsWith("login")) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
@@ -33,6 +34,10 @@ public class TokenFilter implements Filter {
             return;
         }
         if (url.endsWith("get-coupons")) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+        if (url.endsWith("register")) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
@@ -47,7 +52,6 @@ public class TokenFilter implements Filter {
                 return;
             }
         }
-
 
         try {
             tokenManager.isExist(token);

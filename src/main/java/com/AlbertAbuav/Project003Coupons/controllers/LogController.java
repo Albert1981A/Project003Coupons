@@ -22,12 +22,14 @@ import com.AlbertAbuav.Project003Coupons.security.TokenManager;
 import com.AlbertAbuav.Project003Coupons.service.AdminService;
 import com.AlbertAbuav.Project003Coupons.service.CompanyService;
 import com.AlbertAbuav.Project003Coupons.service.CustomerService;
+import com.AlbertAbuav.Project003Coupons.utils.FactoryUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -40,34 +42,43 @@ public class LogController {
     private final CompanyRepository companyRepository;
     private final CustomerRepository customerRepository;
     private final LoginManager loginManager;
+    private final FactoryUtils factoryUtils;
     private LoginResponse loginResponse;
 
     @PostMapping("register")  //==>  http://localhost:8080/client/register
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> registerNewUser(@RequestBody RegisterRequest registerRequest) throws invalidCompanyException, invalidCustomerException, invalidAdminException {
         if (registerRequest.getClientType().equals(ClientType.COMPANY)) {
-            Company company = Company.builder()
-                    .name(registerRequest.getClientName())
-                    .email(registerRequest.getClientEmail())
-                    .password(registerRequest.getClientPassword())
-                    .build();
-            if(companyRepository.existsByEmail(company.getEmail())){
+            Company company = null;
+            if(companyRepository.existsByEmail(registerRequest.getClientEmail())){
                 throw new invalidCompanyException("The Company exist!");
             } else {
+                try {
+                    company = factoryUtils.createCompany();
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+                company.setName(registerRequest.getClientName());
+                company.setEmail(registerRequest.getClientEmail());
+                company.setPassword(registerRequest.getClientPassword());
                 companyRepository.save(company);
                 Company registered = companyRepository.findByEmailAndPassword(company.getEmail(), company.getPassword());
                 loginResponse = loginManager.controllerLogin(registered.getEmail(), registered.getPassword(), ClientType.COMPANY);
             }
         } else if (registerRequest.getClientType().equals(ClientType.CUSTOMER)){
-            Customer customer = Customer.builder()
-                    .firstName(registerRequest.getClientName())
-                    .lastName(registerRequest.getClientLastName())
-                    .email(registerRequest.getClientEmail())
-                    .password(registerRequest.getClientPassword())
-                    .build();
-            if(customerRepository.existsByEmail(customer.getEmail())){
+            Customer customer = null;
+            if(customerRepository.existsByEmail(registerRequest.getClientEmail())){
                 throw new invalidCustomerException("The Customer exist!");
             } else {
+                try {
+                    customer = factoryUtils.createCustomer();
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+                customer.setFirstName(registerRequest.getClientName());
+                customer.setLastName(registerRequest.getClientLastName());
+                customer.setEmail(registerRequest.getClientEmail());
+                customer.setPassword(registerRequest.getClientPassword());
                 customerRepository.save(customer);
                 Customer registered2 = customerRepository.findByEmailAndPassword(customer.getEmail(), customer.getPassword());
 //                registerRequest.setId(registered2.getId());
